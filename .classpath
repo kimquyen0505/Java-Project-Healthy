@@ -6,9 +6,14 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="/Users/kimquyen/Documents/SIU - KHMT/Tai Lieu Java va Python/Project JAVA/jbcrypt-0.4.jar"/>
 	<classpathentry kind="lib" path="/Users/kimquyen/Documents/SIU - KHMT/Java/jfreechart-demo-1.5.2-jar-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="/Users/kimquyen/Documents/SIU - KHMT/json-20140107.jar"/>
 	<classpathentry kind="lib" path="/Users/kimquyen/Documents/SIU - KHMT/mysql-connector-j-9.3.0.jar"/>
+=======
+	<classpathentry kind="lib" path="/Users/kimquyen/Documents/SIU - KHMT/mysql-connector-j-9.3.0.jar"/>
+	<classpathentry kind="lib" path="/Users/kimquyen/Documents/SIU - KHMT/Tai Lieu Java va Python/Project JAVA/jbcrypt-0.4.jar"/>
+>>>>>>> 189b9f1304aa56286711462bbdb00d9c490eeb4e
 	<classpathentry kind="output" path="bin"/>
 </classpath>

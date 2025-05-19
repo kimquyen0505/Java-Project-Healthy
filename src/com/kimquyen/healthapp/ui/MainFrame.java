@@ -37,7 +37,7 @@ public class MainFrame extends JFrame {
     private ManageUsersPanel manageUsersPanel;
     private ManageQuestionsPanel manageQuestionsPanel; // Khai báo nếu bạn sẽ dùng
     // private ManageSponsorsPanel manageSponsorsPanel; // Khai báo nếu bạn sẽ dùng
-
+    private ViewHistoryPanel viewHistoryPanel;
     private JPanel mainPanelContainer;
     private CardLayout cardLayout;
 
@@ -49,7 +49,9 @@ public class MainFrame extends JFrame {
     public static final String TAKE_ASSESSMENT_CARD = "TakeAssessment";
     public static final String MANAGE_USERS_CARD = "ManageUsers";
     public static final String MANAGE_QUESTIONS_CARD = "ManageQuestions";
-    public static final String MANAGE_SPONSORS_CARD = "ManageSponsors"; // Thêm nếu có
+    public static final String MANAGE_SPONSORS_CARD = "ManageSponsors"; 
+    public static final String VIEW_HISTORY_CARD = "ViewHistoryPanel";
+
 
     public MainFrame(AuthService authService, UserService userService,
                      QuestionService questionService, AssessmentService assessmentService,
@@ -97,6 +99,8 @@ public class MainFrame extends JFrame {
 
         cardLayout = new CardLayout();
         mainPanelContainer = new JPanel(cardLayout);
+        viewHistoryPanel = new ViewHistoryPanel(this, this.assessmentService); // Truyền MainFrame và AssessmentService
+        mainPanelContainer.add(viewHistoryPanel, VIEW_HISTORY_CARD);
 
         // Khởi tạo các panel con
         userDashboardPanel = new UserDashboardPanel(this, this.assessmentService);
@@ -190,6 +194,9 @@ public class MainFrame extends JFrame {
         } else if (MANAGE_USERS_CARD.equals(panelNameCard) && manageUsersPanel != null) {
             manageUsersPanel.panelVisible();
             panelTitle = "Quản Lý Người Dùng";
+        } else if (VIEW_HISTORY_CARD.equals(panelNameCard) && viewHistoryPanel != null) {
+            viewHistoryPanel.panelVisible(); // Gọi để tải dữ liệu lịch sử
+            setTitle("Lịch Sử Đánh Giá - Health App");            
         } else if (MANAGE_QUESTIONS_CARD.equals(panelNameCard)) {
              if (manageQuestionsPanel == null) { // Khởi tạo nếu chưa có
                  // manageQuestionsPanel = new ManageQuestionsPanel(this, this.questionService);

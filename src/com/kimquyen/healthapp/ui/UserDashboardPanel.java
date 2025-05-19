@@ -2,59 +2,54 @@
 package com.kimquyen.healthapp.ui;
 
 import com.kimquyen.healthapp.model.UserData;
-import com.kimquyen.healthapp.service.AssessmentService; // Import AssessmentService
+import com.kimquyen.healthapp.service.AssessmentService;
 import com.kimquyen.healthapp.util.SessionManager;
+import com.kimquyen.healthapp.*; // Thêm import này nếu chưa có (cần để dùng MainFrame.TAKE_ASSESSMENT_CARD, ...)
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent; // Import nếu bạn dùng anonymous class cho ActionListener
-import java.awt.event.ActionListener; // Import nếu bạn dùng anonymous class cho ActionListener
+// ActionEvent và ActionListener không cần thiết nếu chỉ dùng lambda
 
 public class UserDashboardPanel extends JPanel {
-    private static final long serialVersionUID = 1L; // Thêm để tránh cảnh báo
+    private static final long serialVersionUID = 1L;
 
     private JLabel welcomeLabel;
     private JButton takeAssessmentButton;
     private JButton viewHistoryButton;
-    // private JPanel chartPanelContainer; // Để chứa biểu đồ (nếu có)
+    // private JPanel chartPanelContainer;
 
-    // Tham chiếu đến MainFrame để gọi các phương thức chuyển panel
-    private MainFrame mainFrame;
-    // Service cần thiết cho panel này
-    private AssessmentService assessmentService;
+    private MainFrame mainFrame; // Tham chiếu đến MainFrame
+    private AssessmentService assessmentService; // Service này có thể cần cho loadChart
 
-    // Constructor nhận MainFrame và AssessmentService
     public UserDashboardPanel(MainFrame mainFrame, AssessmentService assessmentService) {
         this.mainFrame = mainFrame;
         this.assessmentService = assessmentService;
 
         setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Thêm padding
+        setBorder(new EmptyBorder(20, 20, 20, 20));
         initComponents();
-        // loadUserData(); // Gọi trong panelVisible() để đảm bảo dữ liệu mới nhất khi panel được hiển thị
+        // loadUserData(); // Sẽ được gọi trong panelVisible()
     }
 
     private void initComponents() {
-        // Welcome Label
         welcomeLabel = new JLabel("Chào mừng!", JLabel.CENTER);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 28)); // Tăng kích thước font
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 28));
         add(welcomeLabel, BorderLayout.NORTH);
 
-        // Panel cho các nút chính
         JPanel buttonPanel = new JPanel();
-        // Sử dụng GridBagLayout để căn giữa các nút và cho chúng kích thước bằng nhau nếu muốn
         buttonPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10); // Khoảng cách giữa các nút
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Cho nút chiếm hết chiều rộng của ô grid
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         takeAssessmentButton = new JButton("Làm bài đánh giá mới");
         takeAssessmentButton.setFont(new Font("Arial", Font.PLAIN, 16));
-        takeAssessmentButton.setIcon(UIManager.getIcon("FileView.fileIcon")); // Ví dụ icon
-        takeAssessmentButton.setPreferredSize(new Dimension(250, 50)); // Kích thước nút
+        // takeAssessmentButton.setIcon(UIManager.getIcon("FileView.fileIcon")); // Icon có thể gây lỗi nếu không tìm thấy
+        takeAssessmentButton.setPreferredSize(new Dimension(250, 50));
         takeAssessmentButton.addActionListener(e -> {
             if (mainFrame != null) {
-                mainFrame.showPanel(MainFrame.TAKE_ASSESSMENT_CARD); // Gọi MainFrame để chuyển panel
+                mainFrame.showPanel(MainFrame.TAKE_ASSESSMENT_CARD); // Sử dụng hằng số từ MainFrame
             }
         });
         gbc.gridx = 0;
@@ -63,23 +58,29 @@ public class UserDashboardPanel extends JPanel {
 
         viewHistoryButton = new JButton("Xem lịch sử đánh giá");
         viewHistoryButton.setFont(new Font("Arial", Font.PLAIN, 16));
-        viewHistoryButton.setIcon(UIManager.getIcon("FileView.historyIcon")); // Ví dụ icon (cần kiểm tra icon tồn tại)
+        // viewHistoryButton.setIcon(UIManager.getIcon("FileView.historyIcon"));
         viewHistoryButton.setPreferredSize(new Dimension(250, 50));
-        viewHistoryButton.addActionListener(e -> {
-            // Logic để mở panel/dialog xem lịch sử
-            // Ví dụ: if (mainFrame != null) mainFrame.showPanel("ViewHistoryPanel");
-            JOptionPane.showMessageDialog(this, "Chức năng 'Xem lịch sử đánh giá' đang được phát triển.");
-        });
-        gbc.gridx = 0; // Cùng cột
-        gbc.gridy = 1; // Hàng tiếp theo
+        // *** BỎ ActionListener hiển thị JOptionPane ở đây ***
+        // viewHistoryButton.addActionListener(e -> {
+        //     JOptionPane.showMessageDialog(this, "Chức năng 'Xem lịch sử đánh giá' đang được phát triển.");
+        // });
+        gbc.gridx = 0;
+        gbc.gridy = 1;
         buttonPanel.add(viewHistoryButton, gbc);
 
         add(buttonPanel, BorderLayout.CENTER);
 
+        // *** GIỮ LẠI ActionListener này để chuyển panel ***
+        viewHistoryButton.addActionListener(e -> {
+            if (mainFrame != null) {
+                mainFrame.showPanel(MainFrame.VIEW_HISTORY_CARD); // Sử dụng hằng số từ MainFrame
+            }
+        });
+
         // Panel cho biểu đồ (nếu có)
         // chartPanelContainer = new JPanel(new BorderLayout());
         // chartPanelContainer.setBorder(BorderFactory.createTitledBorder("Thống kê nhanh"));
-        // chartPanelContainer.setPreferredSize(new Dimension(getWidth(), 200)); // Chiều cao cố định cho chart
+        // chartPanelContainer.setPreferredSize(new Dimension(getWidth(), 200));
         // add(chartPanelContainer, BorderLayout.SOUTH);
     }
 
@@ -89,37 +90,42 @@ public class UserDashboardPanel extends JPanel {
             UserData currentUserData = session.getCurrentUserData();
             welcomeLabel.setText("Chào mừng, " + currentUserData.getName() + "!");
         } else {
-            // Trường hợp này không nên xảy ra nếu panel chỉ được hiển thị khi đã đăng nhập
-            welcomeLabel.setText("Chào mừng! (Lỗi: Không có thông tin người dùng)");
-            // Có thể gọi mainFrame.performLogout() nếu session không hợp lệ
+            welcomeLabel.setText("Chào mừng! (Không có thông tin người dùng)");
+            // Cân nhắc gọi logout nếu session không hợp lệ
+            if (mainFrame != null && (!session.isLoggedIn() || session.getCurrentUserData() == null) ){
+                 mainFrame.performLogout();
+            }
         }
     }
 
     private void loadChart() {
-        // Logic để tạo và hiển thị JFreeChart (nếu bạn dùng)
-        // Ví dụ:
-        // if (assessmentService != null && SessionManager.getInstance().isLoggedIn()) {
+        // Logic để tạo và hiển thị JFreeChart
+        System.out.println("Chức năng biểu đồ cho UserDashboardPanel đang được phát triển.");
+        // if (assessmentService != null && chartPanelContainer != null && SessionManager.getInstance().isLoggedIn()) {
         //     UserData currentUser = SessionManager.getInstance().getCurrentUserData();
         //     if (currentUser != null) {
-        //         // DefaultPieDataset dataset = assessmentService.getRecentAssessmentSummaryForUser(currentUser.getId());
-        //         // JFreeChart chart = ChartFactory.createPieChart("Kết quả đánh giá gần nhất", dataset, true, true, false);
-        //         // ChartPanel chartDisplayPanel = new ChartPanel(chart);
-        //         // chartPanelContainer.removeAll();
-        //         // chartPanelContainer.add(chartDisplayPanel, BorderLayout.CENTER);
-        //         // chartPanelContainer.revalidate();
-        //         // chartPanelContainer.repaint();
+        //         // Ví dụ: Lấy dữ liệu cho biểu đồ từ service
+        //         // DefaultPieDataset dataset = assessmentService.getSummaryChartDataForUser(currentUser.getId());
+        //         // if (dataset != null && dataset.getItemCount() > 0) {
+        //         //     JFreeChart chart = ChartFactory.createPieChart("Tóm tắt kết quả", dataset, true, true, false);
+        //         //     ChartPanel chartDisplay = new ChartPanel(chart);
+        //         //     chartPanelContainer.removeAll();
+        //         //     chartPanelContainer.add(chartDisplay, BorderLayout.CENTER);
+        //         //     chartPanelContainer.revalidate();
+        //         //     chartPanelContainer.repaint();
+        //         // } else {
+        //         //     chartPanelContainer.removeAll(); // Xóa biểu đồ cũ nếu có
+        //         //     chartPanelContainer.add(new JLabel("Chưa có dữ liệu để vẽ biểu đồ.", SwingConstants.CENTER));
+        //         //     chartPanelContainer.revalidate();
+        //         //     chartPanelContainer.repaint();
+        //         // }
         //     }
         // }
-        System.out.println("Chức năng biểu đồ đang được phát triển.");
     }
 
-    /**
-     * Phương thức này sẽ được gọi bởi MainFrame khi panel này được hiển thị.
-     * Dùng để tải/làm mới dữ liệu cho panel.
-     */
     public void panelVisible() {
-        loadUserData(); // Cập nhật lại thông tin chào mừng
-        loadChart();    // Tải lại biểu đồ (nếu có)
+        loadUserData();
+        loadChart();
         System.out.println("UserDashboardPanel is now visible.");
     }
 }

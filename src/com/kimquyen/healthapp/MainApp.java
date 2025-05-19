@@ -20,6 +20,9 @@ import com.kimquyen.healthapp.dao.UserAssessmentAttemptDAO;
 import com.kimquyen.healthapp.ui.LoginFrame;
 import com.kimquyen.healthapp.ui.*;
 
+// Import UI
+import com.kimquyen.healthapp.ui.LoginFrame;
+
 import javax.swing.SwingUtilities;
 
 public class MainApp {
@@ -57,6 +60,7 @@ public class MainApp {
         userService = new UserService(userDataDAO, accountDAO, passwordHashingService);
         questionService = new QuestionService(hraQuestionDAO);
         assessmentService = new AssessmentService(hraQuestionDAO, hraResponseDAO, userAssessmentAttemptDAO);        // Khởi tạo các service khác nếu có
+        // Khởi tạo các service khác nếu có
 
 
         // 4. Khởi chạy UI trên Event Dispatch Thread
