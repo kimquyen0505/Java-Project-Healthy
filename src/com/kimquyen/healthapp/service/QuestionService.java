@@ -21,38 +21,99 @@ public class QuestionService { // Đây là một lớp, không phải interface
         return hraQuestionDAO.getAllQuestions(); // Giả sử DAO có phương thức này
     }
 
+    public HraQuestion getQuestionById(int questionId) {
+        if (questionId <= 0) {
+            System.err.println("SERVICE (getQuestionById): Question ID '" + questionId + "' không hợp lệ.");
+            return null;
+        }
+        return hraQuestionDAO.getQuestionById(questionId); // Giả sử DAO có phương thức này
+    }
+
     public boolean addQuestion(HraQuestion question) {
-        if (question == null || question.getText() == null || question.getText().trim().isEmpty()) { // Sửa: thường kiểm tra getText() hơn là getTitle() cho nội dung chính
-            System.err.println("SERVICE: Nội dung câu hỏi không được để trống.");
+        // Kiểm tra các điều kiện cơ bản
+        if (question == null) {
+            System.err.println("SERVICE (addQuestion): Đối tượng câu hỏi là null.");
             return false;
         }
-        // Thêm các validation khác nếu cần
-        return hraQuestionDAO.addQuestion(question); // Giả sử DAO có phương thức này
+        if (question.getText() == null || question.getText().trim().isEmpty()) {
+            System.err.println("SERVICE (addQuestion): Nội dung câu hỏi không được để trống.");
+            return false;
+        }
+        if (question.getType() == null || question.getType().trim().isEmpty()) {
+            System.err.println("SERVICE (addQuestion): Loại câu hỏi không được để trống.");
+            return false;
+        }
+
+        // Kiểm tra dựa trên loại câu hỏi
+        String type = question.getType();
+        if (HraQuestion.TYPE_SINGLE_CHOICE.equals(type) || HraQuestion.TYPE_MULTIPLE_CHOICE.equals(type)) {
+            if (question.getChoices() == null || question.getChoices().isEmpty()) {
+                System.err.println("SERVICE (addQuestion): Câu hỏi trắc nghiệm (SINGLE/MULTIPLE_CHOICE) phải có ít nhất một lựa chọn.");
+                return false;
+            }
+            // Có thể thêm validation cho từng OptionChoice nếu cần (ví dụ: label không trống, score hợp lệ)
+        } else if (HraQuestion.TYPE_TEXT_INPUT.equals(type)) {
+            if (question.getGeneralScore() == null) {
+                System.err.println("SERVICE (addQuestion): Câu hỏi dạng TEXT_INPUT phải có điểm chung (generalScore).");
+                return false;
+            }
+        } else {
+            System.err.println("SERVICE (addQuestion): Loại câu hỏi '" + type + "' không được hỗ trợ.");
+            return false;
+        }
+
+        // Nếu tất cả validation đều qua, gọi DAO để thêm
+        return hraQuestionDAO.addQuestion(question);
     }
 
     public boolean updateQuestion(HraQuestion question) {
-        if (question == null || question.getQuestionId() == 0 ||
-            question.getText() == null || question.getText().trim().isEmpty()) {
-            System.err.println("SERVICE: Thông tin câu hỏi không hợp lệ để cập nhật.");
+        // Kiểm tra các điều kiện cơ bản
+        if (question == null) {
+            System.err.println("SERVICE (updateQuestion): Đối tượng câu hỏi là null.");
             return false;
         }
-        return hraQuestionDAO.updateQuestion(question); // Giả sử DAO có phương thức này
+        if (question.getQuestionId() == 0) { // ID 0 thường không hợp lệ cho bản ghi đã tồn tại
+            System.err.println("SERVICE (updateQuestion): Question ID không hợp lệ (0) để cập nhật.");
+            return false;
+        }
+        if (question.getText() == null || question.getText().trim().isEmpty()) {
+            System.err.println("SERVICE (updateQuestion): Nội dung câu hỏi không được để trống khi cập nhật.");
+            return false;
+        }
+        if (question.getType() == null || question.getType().trim().isEmpty()) {
+            System.err.println("SERVICE (updateQuestion): Loại câu hỏi không được để trống khi cập nhật.");
+            return false;
+        }
+
+        // Kiểm tra dựa trên loại câu hỏi (tương tự như addQuestion)
+        String type = question.getType();
+        if (HraQuestion.TYPE_SINGLE_CHOICE.equals(type) || HraQuestion.TYPE_MULTIPLE_CHOICE.equals(type)) {
+            if (question.getChoices() == null || question.getChoices().isEmpty()) {
+                System.err.println("SERVICE (updateQuestion): Câu hỏi trắc nghiệm (SINGLE/MULTIPLE_CHOICE) phải có ít nhất một lựa chọn khi cập nhật.");
+                return false;
+            }
+        } else if (HraQuestion.TYPE_TEXT_INPUT.equals(type)) {
+            if (question.getGeneralScore() == null) {
+                System.err.println("SERVICE (updateQuestion): Câu hỏi dạng TEXT_INPUT phải có điểm chung (generalScore) khi cập nhật.");
+                return false;
+            }
+        } else {
+            System.err.println("SERVICE (updateQuestion): Loại câu hỏi '" + type + "' không được hỗ trợ khi cập nhật.");
+            return false;
+        }
+
+        // Nếu tất cả validation đều qua, gọi DAO để cập nhật
+        return hraQuestionDAO.updateQuestion(question);
     }
 
     public boolean deleteQuestion(int questionId) {
         if (questionId <= 0) { // ID thường là số dương
-            System.err.println("SERVICE: Question ID không hợp lệ để xóa.");
+            System.err.println("SERVICE (deleteQuestion): Question ID '" + questionId + "' không hợp lệ để xóa.");
             return false;
         }
-        // Cân nhắc logic kiểm tra ràng buộc trước khi xóa
-        return hraQuestionDAO.deleteQuestion(questionId); // Giả sử DAO có phương thức này
-    }
-
-    // Thêm phương thức này nếu ManageQuestionsPanel hoặc các phần khác cần
-    public HraQuestion getQuestionById(int questionId) {
-        if (questionId <= 0) {
-            return null;
-        }
-        return hraQuestionDAO.getQuestionById(questionId); // Giả sử DAO có phương thức này
+        // Cân nhắc logic kiểm tra ràng buộc trước khi xóa ở đây nếu cần
+        // Ví dụ: Kiểm tra xem câu hỏi có đang được sử dụng trong các bản ghi hra_responses không.
+        // Tuy nhiên, việc này có thể làm chậm thao tác xóa và có thể được xử lý bởi ràng buộc khóa ngoại của DB.
+        return hraQuestionDAO.deleteQuestion(questionId);
     }
 }

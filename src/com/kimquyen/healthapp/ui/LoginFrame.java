@@ -96,7 +96,7 @@ public class LoginFrame extends JFrame {
 
         if (loggedInAccount != null) {
             UserData loggedInUserData = null;
-            if (loggedInAccount.getUserId() != 0) { // Giả định Account model có getUserId()
+            if (loggedInAccount.getUserId() != 0) {
                 loggedInUserData = userDataDAO.getUserById(loggedInAccount.getUserId());
             }
 
@@ -104,23 +104,21 @@ public class LoginFrame extends JFrame {
                 SessionManager.getInstance().login(loggedInAccount, loggedInUserData);
                 JOptionPane.showMessageDialog(this, "Đăng nhập thành công! Chào mừng " + loggedInUserData.getName() + ".", "Đăng Nhập Thành Công", JOptionPane.INFORMATION_MESSAGE);
 
-                // Mở MainFrame
-                // Đảm bảo MainFrame.java đã được tạo và có constructor phù hợp
-                // Và MainApp.java đã khai báo và khởi tạo các service/dao là public static
                 MainFrame mainFrame = new MainFrame(
-                    MainApp.authService,       // Lấy từ MainApp (phải là public static)
-                    MainApp.userService,       // Lấy từ MainApp (phải là public static)
-                    MainApp.questionService,   // Lấy từ MainApp (phải là public static)
-                    MainApp.assessmentService, // Lấy từ MainApp (phải là public static)
-                    MainApp.userDataDAO,       // Lấy từ MainApp (phải là public static)
-                    MainApp.accountDAO         // Lấy từ MainApp (phải là public static)
+                    MainApp.authService,
+                    MainApp.userService,
+                    MainApp.questionService,
+                    MainApp.assessmentService,
+                    MainApp.sponsorService,   
+                    MainApp.userDataDAO,
+                    MainApp.accountDAO
                 );
                 mainFrame.setVisible(true);
-                this.dispose(); // Đóng LoginFrame
+                this.dispose();
 
             } else {
                 JOptionPane.showMessageDialog(this, "Đăng nhập thành công với tài khoản '" + loggedInAccount.getUsername() + "',\nnhưng không tìm thấy thông tin người dùng (UserData) liên kết (ID: " + loggedInAccount.getUserId() + ").\nVui lòng liên hệ quản trị viên.", "Lỗi Dữ Liệu Người Dùng", JOptionPane.ERROR_MESSAGE);
-                SessionManager.getInstance().logout(); // Đảm bảo logout nếu có lỗi nghiêm trọng
+                SessionManager.getInstance().logout();
             }
         } else {
             JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.", "Đăng Nhập Thất Bại", JOptionPane.ERROR_MESSAGE);
@@ -128,4 +126,5 @@ public class LoginFrame extends JFrame {
             passwordField.requestFocus();
         }
     }
+
 }

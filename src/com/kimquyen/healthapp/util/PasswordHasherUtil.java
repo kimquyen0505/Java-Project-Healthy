@@ -24,7 +24,7 @@ public class PasswordHasherUtil {
         System.out.println("Hashed Password: " + hashedUser1Pass); // << COPY GIÁ TRỊ NÀY
         
        
-        String plainSuperAdminPass = "123456"; // Mật khẩu bạn muốn cho superadmin
+        String plainSuperAdminPass = "admin123"; // Mật khẩu bạn muốn cho superadmin
         String hashedSuperAdminPass = hasher.hashPassword(plainSuperAdminPass);
         System.out.println("Username: superadmin");
         System.out.println("Plain Password: " + plainSuperAdminPass);

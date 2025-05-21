@@ -165,27 +165,34 @@ public class AccountDAO {
     // (Đã thêm ở câu trả lời trước, đảm bảo nó tồn tại và đúng)
     public Account getAccountByUserId(int userId) {
         String sql = "SELECT id, username, password, role, user_data_fk_id FROM account WHERE user_data_fk_id = ?";
+        System.out.println("DAO DEBUG: AccountDAO.getAccountByUserId - SQL: " + sql + " - Parameter: " + userId);
         Account account = null;
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userId);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                String roleStringDb = rs.getString("role");
-                Role accountRole = Role.fromString(roleStringDb);
-                // ... (xử lý roleStringDb và accountRole null như trên) ...
-                account = new Account(
-                    rs.getString("username"),
-                    rs.getString("password"),
-                    accountRole,
-                    rs.getInt("user_data_fk_id")
-                );
-                // account.setAccountId(rs.getInt("id")); // Nếu cần
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String roleStringDb = rs.getString("role");
+                    Role accountRole = Role.fromString(roleStringDb);
+                    // ... (Xử lý role null nếu cần) ...
+
+                    account = new Account( // Gọi constructor 4 tham số
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        accountRole,
+                        rs.getInt("user_data_fk_id") // Chính là userId được truyền vào
+                    );
+                    // Nếu Account model có trường để lưu account.id (PK của bảng account)
+                    // account.setAccountId(rs.getInt("id"));
+                    System.out.println("DAO DEBUG: AccountDAO.getAccountByUserId - Tìm thấy Account: " + account.getUsername());
+                } else {
+                    System.out.println("DAO DEBUG: AccountDAO.getAccountByUserId - KHÔNG tìm thấy Account cho user_data_fk_id: " + userId);
+                }
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi khi lấy Account theo UserData ID: " + userId);
+            System.err.println("Lỗi SQL trong AccountDAO.getAccountByUserId cho user_data_fk_id " + userId + ": " + e.getMessage());
             e.printStackTrace();
         }
         return account;
     }
-}
+ }

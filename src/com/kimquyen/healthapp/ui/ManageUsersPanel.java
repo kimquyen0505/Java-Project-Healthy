@@ -198,20 +198,46 @@ public class ManageUsersPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn một người dùng để sửa.", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        // Chuyển đổi chỉ số hàng từ view sang model (quan trọng khi có sắp xếp/lọc)
         int selectedRowModel = usersTable.convertRowIndexToModel(selectedRowView);
 
-        int userId = (int) tableModel.getValueAt(selectedRowModel, 0); // Cột User ID
-        String username = (String) tableModel.getValueAt(selectedRowModel, 2); // Cột Username
+        int userId = 0;
+        String username = null;
+        try {
+            userId = (int) tableModel.getValueAt(selectedRowModel, 0);       // Cột "User ID"
+            username = (String) tableModel.getValueAt(selectedRowModel, 2);  // Cột "Username"
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy userId/username từ tableModel trong openEditUserDialog: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Lỗi khi đọc dữ liệu từ dòng đã chọn trong bảng.", "Lỗi Bảng", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        UserData userDataToEdit = userService.getUserDataById(userId); // Cần phương thức này trong UserService
-        Account accountToEdit = userService.getAccountByUsername(username); // Cần phương thức này trong UserService
+        System.out.println("ManageUsersPanel - SỬA - Lấy từ bảng -> UserID: " + userId + ", Username: [" + username + "]");
+
+        if (userId == 0 || username == null || username.trim().isEmpty()) {
+             JOptionPane.showMessageDialog(this, "Thông tin UserID hoặc Username từ bảng không hợp lệ.", "Lỗi Dữ Liệu Bảng", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        System.out.println("ManageUsersPanel - SỬA - Gọi userService.getUserDataById(" + userId + ")");
+        UserData userDataToEdit = userService.getUserDataById(userId);
+        System.out.println("ManageUsersPanel - SỬA - UserData từ service: " + (userDataToEdit != null ? "TÌM THẤY (Name: " + userDataToEdit.getName() + ")" : "NULL"));
+
+        System.out.println("ManageUsersPanel - SỬA - Gọi userService.getAccountByUsername('" + username + "')");
+        Account accountToEdit = userService.getAccountByUsername(username);
+        System.out.println("ManageUsersPanel - SỬA - Account từ service: " + (accountToEdit != null ? "TÌM THẤY (Username: " + accountToEdit.getUsername() + ")" : "NULL"));
 
         if (userDataToEdit != null && accountToEdit != null) {
             openAddEditUserDialog(userDataToEdit, accountToEdit);
         } else {
-            JOptionPane.showMessageDialog(this, "Không thể tải thông tin người dùng để sửa.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            loadUsersData(); // Tải lại để đảm bảo dữ liệu nhất quán nếu có lỗi
+            StringBuilder errorMessage = new StringBuilder("Không thể tải thông tin người dùng để sửa:");
+            if (userDataToEdit == null) {
+                errorMessage.append("\n - UserData không tìm thấy cho ID: ").append(userId);
+            }
+            if (accountToEdit == null) {
+                errorMessage.append("\n - Account không tìm thấy cho Username: ").append(username);
+            }
+            JOptionPane.showMessageDialog(this, errorMessage.toString(), "Lỗi Tải Dữ Liệu", JOptionPane.ERROR_MESSAGE);
+            // loadUsersData(); // Có thể không cần load lại nếu chỉ là lỗi tải cho dialog sửa
         }
     }
 
