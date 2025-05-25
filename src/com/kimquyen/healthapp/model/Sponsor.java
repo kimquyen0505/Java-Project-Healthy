@@ -5,7 +5,6 @@ public class Sponsor {
     private int id;
     private String name;
 
-    // Constructors
     public Sponsor() {
     }
 
@@ -14,7 +13,6 @@ public class Sponsor {
         this.name = name;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -31,7 +29,7 @@ public class Sponsor {
         this.name = name;
     }
 
-    // toString
+  
     @Override
     public String toString() {
         return "Sponsor{" +

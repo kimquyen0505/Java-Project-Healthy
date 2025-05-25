@@ -1,4 +1,3 @@
-// com/kimquyen/healthapp/service/SponsorService.java
 package com.kimquyen.healthapp.service;
 
 import com.kimquyen.healthapp.dao.SponsorDAO;
@@ -12,7 +11,7 @@ import java.util.Collections; // Để trả về danh sách rỗng an toàn
 
 public class SponsorService {
     private final SponsorDAO sponsorDAO;
-    private final UserDataDAO userDataDAO; // DAO để lấy thông tin người dùng
+    private final UserDataDAO userDataDAO; 
 
     public SponsorService(SponsorDAO sponsorDAO, UserDataDAO userDataDAO) {
         if (sponsorDAO == null) {
@@ -43,14 +42,7 @@ public class SponsorService {
             System.err.println("SERVICE (addSponsor): Tên nhà tài trợ không được để trống.");
             return false;
         }
-        // Kiểm tra xem tên nhà tài trợ đã tồn tại chưa (nếu cần)
-        // List<Sponsor> existingSponsors = sponsorDAO.getAllSponsors();
-        // for (Sponsor s : existingSponsors) {
-        //     if (s.getName().equalsIgnoreCase(sponsor.getName().trim())) {
-        //         System.err.println("SERVICE (addSponsor): Tên nhà tài trợ '" + sponsor.getName() + "' đã tồn tại.");
-        //         return false;
-        //     }
-        // }
+
         return sponsorDAO.addSponsor(sponsor);
     }
 
@@ -59,7 +51,6 @@ public class SponsorService {
             System.err.println("SERVICE (updateSponsor): Thông tin nhà tài trợ không hợp lệ để cập nhật.");
             return false;
         }
-        // Kiểm tra trùng tên (ngoại trừ chính nó) nếu cần
         return sponsorDAO.updateSponsor(sponsor);
     }
 
@@ -68,19 +59,13 @@ public class SponsorService {
             System.err.println("SERVICE (deleteSponsor): Sponsor ID không hợp lệ để xóa.");
             return false;
         }
-        // **QUAN TRỌNG**: Trước khi xóa nhà tài trợ, bạn cần quyết định điều gì sẽ xảy ra
-        // với những UserData đang được tài trợ bởi nhà tài trợ này.
-        // 1. Cấm xóa nếu có người dùng đang được tài trợ.
-        // 2. Set sponsor_id của những người dùng đó thành NULL (hoặc một ID mặc định "Không có nhà tài trợ").
-        // 3. Xóa luôn cả những người dùng đó (ít khả năng).
 
-        // Ví dụ: Kiểm tra lựa chọn 1
+
         List<UserData> sponsoredUsers = userDataDAO.getUsersBySponsorId(sponsorId);
         if (sponsoredUsers != null && !sponsoredUsers.isEmpty()) {
             System.err.println("SERVICE (deleteSponsor): Không thể xóa nhà tài trợ ID " + sponsorId +
                                " vì có " + sponsoredUsers.size() + " người dùng đang được tài trợ.");
-            // Có thể ném một exception hoặc trả về một mã lỗi đặc biệt để UI hiển thị thông báo
-            return false; // Hoặc throw new SponsorInUseException("Nhà tài trợ đang được sử dụng bởi người dùng.");
+            return false; 
         }
 
         return sponsorDAO.deleteSponsor(sponsorId);

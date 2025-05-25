@@ -5,13 +5,12 @@ import java.sql.Timestamp;
 import java.util.Map;
 
 public class AssessmentResult {
-    private UserData user; // Thông tin người dùng thực hiện đánh giá
-    private Timestamp assessmentDate; // Thời điểm thực hiện đánh giá
-    private Map<HraQuestion, String> responses; // Map câu hỏi -> câu trả lời của người dùng
-    private int totalScore; // Tổng điểm của bài đánh giá
-    private String riskLevel; // Mức độ rủi ro (ví dụ: "Low", "Medium", "High")
+    private UserData user; 
+    private Timestamp assessmentDate; 
+    private Map<HraQuestion, String> responses; 
+    private int totalScore; 
+    private String riskLevel; 
 
-    // Constructors
     public AssessmentResult() {
     }
 
@@ -23,7 +22,6 @@ public class AssessmentResult {
         this.riskLevel = riskLevel;
     }
 
-    // Getters and Setters
     public UserData getUser() {
         return user;
     }
@@ -64,11 +62,10 @@ public class AssessmentResult {
         this.riskLevel = riskLevel;
     }
 
-    // toString
     @Override
     public String toString() {
         return "AssessmentResult{" +
-               "user=" + (user != null ? user.getName() : "null") + // Tránh NullPointerException
+               "user=" + (user != null ? user.getName() : "null") + 
                ", assessmentDate=" + assessmentDate +
                ", responsesCount=" + (responses != null ? responses.size() : 0) +
                ", totalScore=" + totalScore +

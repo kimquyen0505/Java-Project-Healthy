@@ -1,4 +1,3 @@
-// package com.kimquyen.healthapp.service;
 package com.kimquyen.healthapp.service;
 
 import com.kimquyen.healthapp.dao.HraQuestionDAO;
@@ -11,16 +10,15 @@ import com.kimquyen.healthapp.model.UserAssessmentAttempt;
 import com.kimquyen.healthapp.model.UserData;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat; // Thêm import này
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap; // Thêm import này
+import java.util.LinkedHashMap; 
 import java.util.List;
 import java.util.Map;
-
 
 public class AssessmentService {
     private final HraQuestionDAO hraQuestionDAO;
@@ -173,7 +171,6 @@ public class AssessmentService {
         return userAssessmentAttemptDAO.countAttemptsByRiskLevel();
     }
 
-    // PHƯƠNG THỨC MỚI ĐÃ THÊM
     public Map<String, Long> getAssessmentCountByMonth() {
         if (userAssessmentAttemptDAO == null) {
             System.err.println("SERVICE (getAssessmentCountByMonth): userAssessmentAttemptDAO is null!");

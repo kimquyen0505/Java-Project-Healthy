@@ -4,23 +4,20 @@ public class Account {
     private String username;
     private String password;
     private Role role;
-    private int userId; // Trường này đã đúng
+    private int userId; 
 
-    // Constructors
     public Account() {
-        // Constructor mặc định
+        
     }
 
-    // SỬA CONSTRUCTOR NÀY ĐỂ NHẬN 4 THAM SỐ
-    public Account(String username, String password, Role role, int userIdParam) { // Đổi tên tham số để rõ ràng
+    public Account(String username, String password, Role role, int userIdParam) { 
         this.username = username;
         this.password = password;
         this.role = role;
-        this.userId = userIdParam; // Gán giá trị từ tham số userIdParam vào trường this.userId
+        this.userId = userIdParam; 
     }
 
-    // Getters and Setters
-    public String getUsername() {
+        public String getUsername() {
         return username;
     }
 
@@ -52,7 +49,6 @@ public class Account {
         this.userId = userId;
     }
 
-    // toString (for debugging)
     @Override
     public String toString() {
         return "Account{" +

@@ -9,9 +9,6 @@ public class UserAssessmentAttempt {
     private int totalScore;
     private String riskLevel;
 
-    // (Tùy chọn) Có thể thêm đối tượng UserData nếu muốn load thông tin user cùng lúc
-    // private UserData user;
-
     public UserAssessmentAttempt() {
     }
 
@@ -23,7 +20,6 @@ public class UserAssessmentAttempt {
         this.riskLevel = riskLevel;
     }
 
-    // Getters and Setters
     public int getAttemptId() {
         return attemptId;
     }

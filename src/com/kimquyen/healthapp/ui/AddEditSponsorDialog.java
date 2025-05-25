@@ -1,4 +1,3 @@
-// com/kimquyen/healthapp/ui/AddEditSponsorDialog.java
 package com.kimquyen.healthapp.ui;
 
 import com.kimquyen.healthapp.model.Sponsor;
@@ -70,7 +69,7 @@ public class AddEditSponsorDialog extends JDialog {
         }
 
         if (!isEditMode) {
-            currentSponsor = new Sponsor(); // Tạo mới nếu là chế độ thêm
+            currentSponsor = new Sponsor(); 
         }
         currentSponsor.setName(name);
 

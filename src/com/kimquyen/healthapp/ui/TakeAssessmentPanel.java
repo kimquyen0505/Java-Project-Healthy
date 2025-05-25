@@ -1,7 +1,6 @@
-// package com.kimquyen.healthapp.ui;
 package com.kimquyen.healthapp.ui;
 
-import com.kimquyen.healthapp.model.HraQuestion; // Đảm bảo model này có các hằng số TYPE_ và OptionChoice
+import com.kimquyen.healthapp.model.HraQuestion; 
 import com.kimquyen.healthapp.model.UserData;
 import com.kimquyen.healthapp.model.AssessmentResult;
 import com.kimquyen.healthapp.service.AssessmentService;
@@ -19,10 +18,6 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-// KHÔNG CẦN org.json ở đây nữa nếu DAO đã xử lý việc tạo OptionChoice
-// import org.json.JSONArray;
-// import org.json.JSONObject;
-// import org.json.JSONException;
 
 public class TakeAssessmentPanel extends JPanel {
     private static final long serialVersionUID = 1L;

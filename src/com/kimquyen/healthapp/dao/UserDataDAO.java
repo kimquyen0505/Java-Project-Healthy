@@ -17,22 +17,18 @@ public class UserDataDAO {
 	public UserData getUserById(int userId) {
 	    String sql = "SELECT id, name, sponsor_id, created_at FROM users_data WHERE id = ?";
 	    System.out.println("DAO DEBUG: UserDataDAO.getUserById - SQL: " + sql + " - Parameter: " + userId); // Giữ lại dòng debug này
-	    UserData user = null; // Khởi tạo là null
+	    UserData user = null;
 	    try (Connection conn = DatabaseUtil.getConnection();
 	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 	        pstmt.setInt(1, userId);
-	        try (ResultSet rs = pstmt.executeQuery()) { // Đặt ResultSet trong try-with-resources
+	        try (ResultSet rs = pstmt.executeQuery()) { 
 	            if (rs.next()) {
-	                // TẠO ĐỐI TƯỢNG USERDATA TỪ RESULTSET
-	                user = new UserData(); // Tạo instance mới
+	                user = new UserData(); 
 	                user.setId(rs.getInt("id"));
 	                user.setName(rs.getString("name"));
-	                user.setSponsorId(rs.getInt("sponsor_id")); // getInt sẽ trả về 0 nếu giá trị SQL là NULL
-	                if (rs.wasNull()) { // Kiểm tra xem sponsor_id có thực sự là NULL không
-	                    // Nếu bạn muốn model UserData có sponsorId là Integer (cho phép null)
-	                    // thì bạn cần một setter khác hoặc xử lý khác ở đây.
-	                    // Hiện tại, nếu sponsor_id là NULL, user.getSponsorId() sẽ là 0.
+	                user.setSponsorId(rs.getInt("sponsor_id")); 
+	                if (rs.wasNull()) { 	                   
 	                }
 	                user.setCreatedAt(rs.getTimestamp("created_at"));
 
@@ -40,13 +36,12 @@ public class UserDataDAO {
 	            } else {
 	                System.out.println("DAO DEBUG: UserDataDAO.getUserById - KHÔNG tìm thấy UserData cho id: " + userId);
 	            }
-	        } // ResultSet rs được đóng ở đây
+	        } 
 	    } catch (SQLException e) {
 	        System.err.println("Lỗi SQL trong UserDataDAO.getUserById cho id " + userId + ": " + e.getMessage());
 	        e.printStackTrace();
-	        // Không return ở đây để return user (có thể là null) ở cuối
 	    }
-	    return user; // Trả về user (có thể là null nếu không tìm thấy hoặc có lỗi)
+	    return user; 
 	}
 
     public List<UserData> getAllUsers() {
@@ -72,14 +67,13 @@ public class UserDataDAO {
         return users;
     }
 
-    public UserData addUser(UserData user) { // Trả về UserData với ID đã được tạo
+    public UserData addUser(UserData user) { 
         String sql = "INSERT INTO users_data (name, sponsor_id, created_at) VALUES (?, ?, ?)";
-        // Sử dụng Statement.RETURN_GENERATED_KEYS để lấy ID tự tăng
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setString(1, user.getName());
-            if (user.getSponsorId() == 0) { // Giả sử 0 nghĩa là không có sponsor_id
+            if (user.getSponsorId() == 0) { 
                 pstmt.setNull(2, Types.INTEGER);
             } else {
                 pstmt.setInt(2, user.getSponsorId());
@@ -92,7 +86,7 @@ public class UserDataDAO {
                 try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         user.setId(generatedKeys.getInt(1));
-                        return user; // Trả về user với ID đã được cập nhật
+                        return user; 
                     }
                 }
             }
@@ -100,7 +94,7 @@ public class UserDataDAO {
             System.err.println("Lỗi khi thêm UserData: " + user.getName());
             e.printStackTrace();
         }
-        return null; // Trả về null nếu thất bại
+        return null; 
     }
 
 
@@ -138,7 +132,7 @@ public class UserDataDAO {
                 UserData user = new UserData(
                     rs.getInt("id"),
                     rs.getString("name"),
-                    rs.getInt("sponsor_id"), // Sẽ bằng sponsorId truyền vào
+                    rs.getInt("sponsor_id"), 
                     rs.getTimestamp("created_at")
                 );
                 users.add(user);
@@ -169,9 +163,6 @@ public class UserDataDAO {
     
     public Map<Integer, Long> countUsersBySponsorId() {
         Map<Integer, Long> counts = new HashMap<>();
-        // Nếu sponsor_id trong DB có thể là NULL, và bạn muốn nhóm cả NULL và 0 lại với nhau
-        // bạn có thể dùng COALESCE(sponsor_id, 0) trong SQL.
-        // Ở đây, giả sử 0 trong DB nghĩa là không có sponsor.
         String sql = "SELECT sponsor_id, COUNT(*) as user_count FROM users_data GROUP BY sponsor_id";
         System.out.println("DAO DEBUG: UserDataDAO.countUsersBySponsorId - SQL: " + sql);
 
@@ -180,7 +171,7 @@ public class UserDataDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                int sponsorId = rs.getInt("sponsor_id"); // getInt trả về 0 nếu sponsor_id là NULL trong DB
+                int sponsorId = rs.getInt("sponsor_id"); 
                 long userCount = rs.getLong("user_count");
                 counts.put(sponsorId, userCount);
             }
@@ -195,12 +186,11 @@ public class UserDataDAO {
     }
     
     public Map<String, Long> countNewUsersByMonth() {
-        // Sử dụng LinkedHashMap để các tháng được trả về theo thứ tự
         Map<String, Long> userCountsByMonth = new LinkedHashMap<>();
         String sql = "SELECT DATE_FORMAT(created_at, '%Y-%m') as creation_month, COUNT(*) as user_count " +
                      "FROM users_data " +
                      "GROUP BY creation_month " +
-                     "ORDER BY creation_month ASC"; // Sắp xếp theo tháng tăng dần
+                     "ORDER BY creation_month ASC"; 
         System.out.println("DAO DEBUG: UserDataDAO.countNewUsersByMonth - SQL: " + sql);
 
         try (Connection conn = DatabaseUtil.getConnection();
@@ -210,7 +200,7 @@ public class UserDataDAO {
             while (rs.next()) {
                 String monthYear = rs.getString("creation_month");
                 long count = rs.getLong("user_count");
-                if (monthYear != null) { // Chỉ thêm nếu tháng-năm không null
+                if (monthYear != null) { 
                     userCountsByMonth.put(monthYear, count);
                 }
             }

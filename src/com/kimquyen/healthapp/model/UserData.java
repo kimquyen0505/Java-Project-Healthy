@@ -8,7 +8,6 @@ public class UserData {
     private int sponsorId;
     private Timestamp createdAt;
 
-    // Constructors
     public UserData() {
     }
 
@@ -19,7 +18,6 @@ public class UserData {
         this.createdAt = createdAt;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -52,7 +50,6 @@ public class UserData {
         this.createdAt = createdAt;
     }
 
-    // toString
     @Override
     public String toString() {
         return "UserData{" +

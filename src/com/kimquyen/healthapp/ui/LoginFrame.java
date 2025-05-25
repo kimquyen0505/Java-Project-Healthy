@@ -40,32 +40,46 @@ public class LoginFrame extends JFrame {
     private void initComponents() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
+        ((JPanel) getContentPane()).setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Username
-        gbc.gridx = 0; gbc.gridy = 0;
+        // Tiêu đề (Mới)
+        JLabel titleLabel = new JLabel("Đăng Nhập Health App", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Hoặc UIConstants.FONT_TITLE
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2; gbc.insets = new Insets(0, 0, 20, 0); // Khoảng cách dưới tiêu đề
+        add(titleLabel, gbc);
+        gbc.gridwidth = 1; // Reset gridwidth
+        gbc.insets = new Insets(10, 10, 10, 10); // Reset insets
+
+
+        // Username
+        gbc.gridx = 0; gbc.gridy = 1; // Điều chỉnh gridy
         add(new JLabel("Tên đăng nhập:"), gbc);
         usernameField = new JTextField(20);
-        gbc.gridx = 1; gbc.gridy = 0;
+        gbc.gridx = 1; gbc.gridy = 1;
         add(usernameField, gbc);
 
         // Password
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0; gbc.gridy = 2; // Điều chỉnh gridy
         add(new JLabel("Mật khẩu:"), gbc);
         passwordField = new JPasswordField(20);
-        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.gridx = 1; gbc.gridy = 2;
         add(passwordField, gbc);
 
         // Login Button
         loginButton = new JButton("Đăng nhập");
-        loginButton.setFont(new Font("Arial", Font.BOLD, 14));
-        gbc.gridx = 0; gbc.gridy = 2;
+        loginButton.setFont(new Font("Arial", Font.BOLD, 14)); // Hoặc UIConstants.FONT_BUTTON
+        loginButton.setPreferredSize(new Dimension(120, 35)); // Hoặc UIConstants.DIM_BUTTON_STANDARD
+        gbc.gridx = 0; gbc.gridy = 3; // Điều chỉnh gridy
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(20, 10, 10, 10);
         add(loginButton, gbc);
+
 
         // ActionListener cho nút đăng nhập
         loginButton.addActionListener(e -> performLogin());

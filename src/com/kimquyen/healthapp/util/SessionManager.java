@@ -1,4 +1,4 @@
-package com.kimquyen.healthapp.util; // Đảm bảo package này đúng với cấu trúc project của bạn
+package com.kimquyen.healthapp.util; 
 
 import com.kimquyen.healthapp.model.Account;
 import com.kimquyen.healthapp.model.UserData; // Cần thiết vì chúng ta sẽ lưu và trả về UserData
@@ -6,11 +6,9 @@ import com.kimquyen.healthapp.model.UserData; // Cần thiết vì chúng ta s�
 public class SessionManager {
     private static SessionManager instance;
     private Account currentAccount;
-    private UserData currentUserData; // Biến để lưu thông tin UserData của người đăng nhập
+    private UserData currentUserData; 
 
-    // Constructor private để đảm bảo Singleton
     private SessionManager() {
-        // Không cần làm gì đặc biệt ở đây cho trường hợp này
     }
 
     // Phương thức static để lấy instance duy nhất, đảm bảo thread-safe khi tạo lần đầu
@@ -31,15 +29,11 @@ public class SessionManager {
     public void login(Account account, UserData userData) {
         if (account == null) {
             System.err.println("LỖI NGHIÊM TRỌNG (SessionManager): Không thể đăng nhập với Account là null.");
-            // Trong ứng dụng thực tế, bạn có thể muốn ném một RuntimeException ở đây
-            // để dừng luồng bất thường này, vì đây là một trạng thái không hợp lệ.
-            // Ví dụ: throw new IllegalArgumentException("Account không được null khi thực hiện login vào session.");
-            return; // Dừng thực thi nếu account là null để tránh lỗi ở dưới
+           
+            return;
         }
         this.currentAccount = account;
-        this.currentUserData = userData; // Gán UserData được truyền vào
-                                         // Nếu userData là null, thì currentUserData cũng sẽ là null.
-                                         // Điều này cần được xử lý ở nơi gọi getCurrentUserData() nếu nó có thể null.
+        this.currentUserData = userData; 
     }
 
     /**
@@ -47,7 +41,7 @@ public class SessionManager {
      */
     public void logout() {
         this.currentAccount = null;
-        this.currentUserData = null; // << SỬA Ở ĐÂY: Đảm bảo currentUserData cũng được reset khi logout
+        this.currentUserData = null; 
     }
 
     /**
@@ -64,7 +58,7 @@ public class SessionManager {
      *
      * @return Đối tượng UserData, hoặc null nếu chưa có ai đăng nhập hoặc UserData không được thiết lập.
      */
-    public UserData getCurrentUserData() { // << SỬA Ở ĐÂY: Bỏ comment và triển khai phương thức này
+    public UserData getCurrentUserData() { 
         return currentUserData;
     }
 
@@ -74,6 +68,6 @@ public class SessionManager {
      * @return true nếu có người dùng đang đăng nhập, false nếu không.
      */
     public boolean isLoggedIn() {
-        return currentAccount != null; // Chỉ cần kiểm tra currentAccount là đủ để xác định trạng thái đăng nhập
+        return currentAccount != null; 
     }
 }

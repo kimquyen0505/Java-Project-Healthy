@@ -52,7 +52,6 @@ public class SponsorDAO {
     }
 
     public boolean addSponsor(Sponsor sponsor) {
-        // Giả sử id là tự tăng
         String sql = "INSERT INTO sponsor_data (name) VALUES (?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

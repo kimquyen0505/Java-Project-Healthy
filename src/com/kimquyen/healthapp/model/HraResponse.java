@@ -5,11 +5,10 @@ import java.sql.Timestamp;
 public class HraResponse {
     private int id;
     private int userId; // Tham chiếu đến UserData.id
-    private int questionId; // Tham chiếu đến HraQuestion.questionId
+    private int questionId; 
     private String response; // Câu trả lời của người dùng
     private Timestamp createdAt;
 
-    // Constructors
     public HraResponse() {
     }
 
@@ -21,7 +20,6 @@ public class HraResponse {
         this.createdAt = createdAt;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -62,7 +60,6 @@ public class HraResponse {
         this.createdAt = createdAt;
     }
 
-    // toString
     @Override
     public String toString() {
         return "HraResponse{" +

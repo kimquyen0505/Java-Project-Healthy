@@ -5,25 +5,24 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class HraQuestion {
-    // Hằng số cho các loại câu hỏi
     public static final String TYPE_SINGLE_CHOICE = "SINGLE_CHOICE";
     public static final String TYPE_MULTIPLE_CHOICE = "MULTIPLE_CHOICE";
     public static final String TYPE_TEXT_INPUT = "TEXT_INPUT";
 
     private int questionId;
-    private String type;    // Sẽ sử dụng các hằng số ở trên
+    private String type;    
     private String title;
     private String text;
 
     // Danh sách các lựa chọn cho câu hỏi trắc nghiệm
     private List<OptionChoice> choices;
 
-    // Điểm chung cho câu hỏi TEXT_INPUT (hoặc điểm mặc định nếu không có lựa chọn nào được chọn)
+    // Điểm chung cho câu hỏi TEXT_INPUT 
     private Integer generalScore;
 
     // Lớp nội bộ để đại diện cho một lựa chọn và điểm của nó
     public static class OptionChoice {
-        private String optionValue; // Giá trị để lưu vào DB (có thể là label đã chuẩn hóa)
+        private String optionValue; // Giá trị để lưu vào DB
         private String optionLabel; // Nhãn hiển thị cho người dùng
         private int optionScore;    // Điểm cho lựa chọn này
 
@@ -38,13 +37,14 @@ public class HraQuestion {
         public int getOptionScore() { return optionScore; }
 
         @Override
-        public String toString() { // Quan trọng cho JComboBox nếu bạn dùng nó với OptionChoice
+        public String toString() {
             return optionLabel;
         }
     }
-
+    
+    // Luôn khởi tạo danh sách choices
     public HraQuestion() {
-        this.choices = new ArrayList<>(); // Luôn khởi tạo danh sách choices
+        this.choices = new ArrayList<>(); 
     }
 
     // Constructor chính được sử dụng bởi DAO khi tạo đối tượng câu hỏi ban đầu
@@ -56,7 +56,6 @@ public class HraQuestion {
         this.text = text;
     }
 
-    // Getters and Setters
     public int getQuestionId() { return questionId; }
     public void setQuestionId(int questionId) { this.questionId = questionId; }
 
@@ -72,7 +71,7 @@ public class HraQuestion {
     public List<OptionChoice> getChoices() { return choices; }
     public void setChoices(List<OptionChoice> choices) { this.choices = choices; }
     public void addChoice(OptionChoice choice) {
-        if (this.choices == null) { // Đảm bảo an toàn dù đã khởi tạo trong constructor
+        if (this.choices == null) {
             this.choices = new ArrayList<>();
         }
         this.choices.add(choice);

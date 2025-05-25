@@ -1,7 +1,5 @@
-// package com.kimquyen.healthapp; // Hoặc package gốc của bạn
 package com.kimquyen.healthapp;
 
-// Import tất cả các DAO
 import com.kimquyen.healthapp.dao.AccountDAO;
 import com.kimquyen.healthapp.dao.SponsorDAO;
 import com.kimquyen.healthapp.dao.HraQuestionDAO;
@@ -9,19 +7,17 @@ import com.kimquyen.healthapp.dao.HraResponseDAO;
 import com.kimquyen.healthapp.dao.UserDataDAO;
 import com.kimquyen.healthapp.dao.UserAssessmentAttemptDAO;
 
-// Import tất cả các Service
 import com.kimquyen.healthapp.service.AssessmentService;
 import com.kimquyen.healthapp.service.AuthService;
 import com.kimquyen.healthapp.service.BCryptPasswordHashingServiceImpl;
 import com.kimquyen.healthapp.service.PasswordHashingService;
 import com.kimquyen.healthapp.service.QuestionService;
-import com.kimquyen.healthapp.service.SponsorService; // Đã import
+import com.kimquyen.healthapp.service.SponsorService;
 import com.kimquyen.healthapp.service.UserService;
 
-// Import UI
+import javax.swing.UIManager;
+// import javax.swing.UIManager.LookAndFeelInfo; // Bạn không dùng vòng lặp nữa nên có thể bỏ
 import com.kimquyen.healthapp.ui.LoginFrame;
-// import com.kimquyen.healthapp.ui.*; // Có thể bỏ nếu không dùng wildcard cho UI ở đây
-
 import javax.swing.SwingUtilities;
 
 public class MainApp {
@@ -32,7 +28,7 @@ public class MainApp {
     public static HraQuestionDAO hraQuestionDAO;
     public static HraResponseDAO hraResponseDAO;
     public static UserAssessmentAttemptDAO userAssessmentAttemptDAO;
-    public static SponsorDAO sponsorDAO; // Chỉ cần một lần khai báo
+    public static SponsorDAO sponsorDAO;
 
     public static PasswordHashingService passwordHashingService;
     public static AuthService authService;
@@ -42,34 +38,42 @@ public class MainApp {
     public static SponsorService sponsorService;
 
     public static void main(String[] args) {
-        // 1. Khởi tạo DAOs
+        // 1. Thiết lập Look and Feel (nên làm đầu tiên)
+        try {
+            // Bạn có thể chọn một trong các L&F của FlatLaf
+            // UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
+            // UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
+            // UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatIntelliJLaf());
+            UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarculaLaf());
+            System.out.println("FlatLaf Darcula Look and Feel được áp dụng thành công.");
+        } catch (Exception ex) {
+            // Nếu FlatLaf không khởi tạo được (ví dụ thiếu JAR),
+            // ứng dụng sẽ dùng L&F mặc định của hệ thống.
+            System.err.println("Không thể khởi tạo FlatLaf, sử dụng L&F mặc định: " + ex.getMessage());
+            // Không cần thiết lập lại Nimbus ở đây nữa nếu ưu tiên FlatLaf.
+        }
+
+        // 2. Khởi tạo DAOs
         accountDAO = new AccountDAO();
         userDataDAO = new UserDataDAO();
         hraQuestionDAO = new HraQuestionDAO();
         hraResponseDAO = new HraResponseDAO();
         userAssessmentAttemptDAO = new UserAssessmentAttemptDAO();
-        sponsorDAO = new SponsorDAO(); // Chỉ cần một lần khởi tạo
+        sponsorDAO = new SponsorDAO();
 
-        // 2. Khởi tạo PasswordHashingService
+        // 3. Khởi tạo PasswordHashingService
         passwordHashingService = new BCryptPasswordHashingServiceImpl();
 
-        // 3. Khởi tạo Services
+        // 4. Khởi tạo Services
         authService = new AuthService(accountDAO, userDataDAO, passwordHashingService);
-        // <<==== SỬA Ở ĐÂY: Truyền sponsorDAO vào constructor của UserService ====>>
         userService = new UserService(userDataDAO, accountDAO, passwordHashingService, sponsorDAO);
         questionService = new QuestionService(hraQuestionDAO);
         assessmentService = new AssessmentService(hraQuestionDAO, hraResponseDAO, userAssessmentAttemptDAO);
         sponsorService = new SponsorService(sponsorDAO, userDataDAO);
 
-        // 4. Khởi chạy UI trên Event Dispatch Thread
+        // 5. Khởi chạy UI trên Event Dispatch Thread
         SwingUtilities.invokeLater(() -> {
             new LoginFrame(authService, userDataDAO).setVisible(true);
         });
     }
-
-    // Các getter tĩnh (tùy chọn)
-    // public static AuthService getAuthService() { return authService; }
-    // public static UserService getUserService() { return userService; }
-    // ... (và các service/DAO khác nếu cần)
-    // public static SponsorService getSponsorService() { return sponsorService; }
 }

@@ -8,16 +8,13 @@ import com.kimquyen.healthapp.config.DatabaseConfig; // Đảm bảo import này
 public class DatabaseUtil {
     static {
         try {
-            // Đảm bảo tên driver chính xác cho phiên bản MySQL Connector/J bạn đang dùng
-            // Ví dụ: com.mysql.cj.jdbc.Driver cho phiên bản 8+
-            // Hoặc: com.mysql.jdbc.Driver cho phiên bản 5.x
+
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("MySQL JDBC Driver đã được tải thành công!");
         } catch (ClassNotFoundException e) {
             System.err.println("Không tìm thấy MySQL JDBC Driver!");
             e.printStackTrace();
-            // Ném RuntimeException để dừng ứng dụng nếu driver không tải được
-            // vì đây là lỗi nghiêm trọng không thể tiếp tục.
+
             throw new RuntimeException("MySQL JDBC Driver not found!", e);
         }
     }
@@ -39,12 +36,10 @@ public class DatabaseUtil {
         Connection conn = null;
         try {
             System.out.println("--- Bắt đầu kiểm tra kết nối Database ---");
-            conn = DatabaseUtil.getConnection(); // Gọi phương thức getConnection
+            conn = DatabaseUtil.getConnection(); 
 
             if (conn != null && !conn.isClosed()) {
                 System.out.println("Trạng thái kết nối: Đang mở.");
-                // Bạn có thể thực hiện một truy vấn đơn giản ở đây nếu muốn
-                // ví dụ: conn.getMetaData().getDatabaseProductName();
             } else {
                 System.err.println("Kết nối không thành công hoặc đã bị đóng.");
             }
@@ -65,7 +60,7 @@ public class DatabaseUtil {
         finally {
             if (conn != null) {
                 try {
-                    conn.close(); // Luôn đóng kết nối sau khi sử dụng
+                    conn.close(); 
                     System.out.println("Kết nối đã được đóng.");
                 } catch (SQLException e) {
                     System.err.println("Lỗi khi đóng kết nối:");

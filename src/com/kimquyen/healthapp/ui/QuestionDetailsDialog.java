@@ -1,4 +1,3 @@
-// com/kimquyen/healthapp/ui/QuestionDetailsDialog.java
 package com.kimquyen.healthapp.ui;
 
 import com.kimquyen.healthapp.model.HraQuestion;

@@ -1,5 +1,4 @@
-// package com.kimquyen.healthapp.ui;
-package com.kimquyen.healthapp.ui; // Hoặc package UI của bạn
+package com.kimquyen.healthapp.ui; 
 
 import com.kimquyen.healthapp.model.Account;
 import com.kimquyen.healthapp.model.Role;
@@ -8,12 +7,9 @@ import com.kimquyen.healthapp.service.UserService;
 import com.kimquyen.healthapp.util.ValidationUtil;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent; // Cần cho DocumentListener
-import javax.swing.event.DocumentListener; // Cần cho DocumentListener
+import javax.swing.event.DocumentEvent; 
+import javax.swing.event.DocumentListener; 
 import java.awt.*;
-// ActionEvent và ActionListener không cần thiết nếu chỉ dùng lambda cho nút
-// import java.awt.event.ActionEvent;
-// import java.awt.event.ActionListener;
 
 public class AddEditUserDialog extends JDialog {
     private static final long serialVersionUID = 1L;
@@ -35,12 +31,11 @@ public class AddEditUserDialog extends JDialog {
     private JButton saveButton;
     private JButton cancelButton;
 
-    // << KHAI BÁO LÀ BIẾN INSTANCE >>
     private JLabel confirmPasswordLabel;
-    private JPanel formPanel; // Đưa formPanel ra làm biến instance để revalidate
+    private JPanel formPanel; 
 
     public AddEditUserDialog(Frame parent, UserService userService, UserData userDataToEdit, Account accountToEdit) {
-        super(parent, "Thông Tin Người Dùng", true); // Thêm tiêu đề mặc định, modal
+        super(parent, "Thông Tin Người Dùng", true);
         this.userService = userService;
         this.currentUserData = userDataToEdit;
         this.currentAccount = accountToEdit;
@@ -54,10 +49,9 @@ public class AddEditUserDialog extends JDialog {
 
     private void initComponents() {
         setLayout(new BorderLayout(10, 10));
-        // Đặt padding cho content pane của JDialog
         ((JPanel) getContentPane()).setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        formPanel = new JPanel(new GridBagLayout()); // Gán cho biến instance
+        formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
@@ -101,7 +95,6 @@ public class AddEditUserDialog extends JDialog {
         gbc.gridx = 1; gbc.gridy = 3;
         formPanel.add(confirmPasswordField, gbc);
 
-        // Đặt visibility ban đầu và thêm DocumentListener
         if (isEditMode) {
             confirmPasswordLabel.setVisible(false);
             confirmPasswordField.setVisible(false);
@@ -154,39 +147,26 @@ public class AddEditUserDialog extends JDialog {
 
     // Phương thức checkPasswordFields sử dụng các biến instance
     private void checkPasswordFields() {
-        // Chỉ hiển thị trường xác nhận nếu đang ở chế độ thêm mới,
-        // HOẶC nếu đang ở chế độ sửa VÀ người dùng đã nhập gì đó vào trường mật khẩu mới.
+
         boolean passwordFieldHasText = passwordField.getPassword().length > 0;
         boolean showConfirm = !isEditMode || (isEditMode && passwordFieldHasText);
 
         confirmPasswordLabel.setVisible(showConfirm);
         confirmPasswordField.setVisible(showConfirm);
 
-        // Nếu đang ở chế độ sửa và người dùng xóa hết mật khẩu mới,
-        // thì cũng ẩn luôn trường xác nhận (để trở về trạng thái "không đổi mật khẩu")
         if (isEditMode && !passwordFieldHasText) {
             confirmPasswordLabel.setVisible(false);
             confirmPasswordField.setVisible(false);
         }
 
-
-        // Cập nhật layout của panel chứa các label/field này để thay đổi visibility có hiệu lực.
-        // Và có thể cần pack() lại dialog nếu kích thước thay đổi nhiều.
         if (formPanel != null) {
             formPanel.revalidate();
             formPanel.repaint();
-            // Cân nhắc gọi pack() nếu việc ẩn/hiện làm thay đổi nhiều kích thước dialog
-            // Window window = SwingUtilities.getWindowAncestor(this);
-            // if (window != null) {
-            //     window.pack();
-            // }
         }
     }
 
 
     private void performSave() {
-        // ... (Phần performSave giữ nguyên như code gốc bạn đã cung cấp, nó đã khá tốt) ...
-        // Đảm bảo các validation và logic gọi service là chính xác.
         String name = nameField.getText().trim();
         String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword());
@@ -210,7 +190,6 @@ public class AddEditUserDialog extends JDialog {
             return;
         }
 
-        // Chỉ kiểm tra confirmPassword nếu trường confirmPassword đang hiển thị VÀ trường password có nội dung
         if (confirmPasswordField.isVisible() && !password.isEmpty()) {
             if (!password.equals(confirmPassword)) {
                  JOptionPane.showMessageDialog(this, "Mật khẩu và xác nhận mật khẩu không khớp.", "Lỗi Nhập Liệu", JOptionPane.WARNING_MESSAGE);
@@ -218,12 +197,10 @@ public class AddEditUserDialog extends JDialog {
                 return;
             }
         } else if (!isEditMode && password.isEmpty() != confirmPassword.isEmpty() && !password.equals(confirmPassword) ) {
-            // Trường hợp thêm mới, mật khẩu và xác nhận phải được nhập và khớp
              JOptionPane.showMessageDialog(this, "Khi thêm mới, mật khẩu và xác nhận mật khẩu phải được nhập và khớp.", "Lỗi Nhập Liệu", JOptionPane.WARNING_MESSAGE);
             confirmPasswordField.requestFocus();
             return;
         }
-
 
         if (role == null) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn một vai trò.", "Lỗi Nhập Liệu", JOptionPane.WARNING_MESSAGE);
@@ -260,11 +237,11 @@ public class AddEditUserDialog extends JDialog {
             if (!password.isEmpty()) {
                 accountChanges.setPassword(password);
             } else {
-                accountChanges.setPassword(null); // Service sẽ hiểu là không đổi mật khẩu
+                accountChanges.setPassword(null); 
             }
             operationSuccess = userService.updateUser(currentUserData, accountChanges);
 
-        } else { // Chế độ Thêm Mới
+        } else { 
             UserData newUser = new UserData();
             newUser.setName(name);
             if (sponsorId != null) {

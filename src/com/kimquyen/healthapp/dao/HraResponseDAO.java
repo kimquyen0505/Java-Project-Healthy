@@ -1,6 +1,5 @@
 package com.kimquyen.healthapp.dao;
 
-
 import com.kimquyen.healthapp.model.HraResponse;
 import com.kimquyen.healthapp.util.DatabaseUtil;
 
@@ -85,7 +84,6 @@ public class HraResponseDAO {
     }
 
     public boolean addResponse(HraResponse hraResponse) {
-        // Giả sử id là tự tăng trong DB
         String sql = "INSERT INTO hra_responses (user_id, question_id, response, created_at) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -101,10 +99,4 @@ public class HraResponseDAO {
             return false;
         }
     }
-
-    // Các phương thức update/delete cho HraResponse có thể không cần thiết
-    // tùy theo logic nghiệp vụ (thường thì câu trả lời đã gửi sẽ không sửa/xóa)
-    // Nếu cần, bạn có thể thêm:
-    // public boolean updateResponse(HraResponse hraResponse) { ... }
-    // public boolean deleteResponse(int responseId) { ... }
 }

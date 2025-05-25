@@ -9,9 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccountDAO {
-
     public Account getAccountByUsername(String username) {
-        String sql = "SELECT id, username, password, role, user_data_fk_id FROM account WHERE username = ?"; // Lấy cả id của account
+        String sql = "SELECT id, username, password, role, user_data_fk_id FROM account WHERE username = ?"; 
         Account account = null;
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -33,11 +32,8 @@ public class AccountDAO {
                     rs.getString("username"),
                     rs.getString("password"),
                     accountRole,
-                    rs.getInt("user_data_fk_id") // Đây là ID của UserData
+                    rs.getInt("user_data_fk_id") 
                 );
-                // Tùy chọn: Nếu bạn muốn lưu ID của bản ghi account (khóa chính của bảng account)
-                // vào đối tượng Account (ví dụ: model Account có thêm trường accountId), bạn có thể làm:
-                // account.setAccountId(rs.getInt("id")); // Giả sử Account model có setAccountId()
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy Account theo username: " + username);
@@ -67,9 +63,9 @@ public class AccountDAO {
                     rs.getString("username"),
                     rs.getString("password"),
                     accountRole,
-                    rs.getInt("user_data_fk_id") // ID của UserData
+                    rs.getInt("user_data_fk_id") 
                 );
-                // account.setAccountId(rs.getInt("id")); // Nếu cần lưu ID của bản ghi account
+          
                 accounts.add(account);
             }
         } catch (SQLException e) {
@@ -79,27 +75,25 @@ public class AccountDAO {
         return accounts;
     }
 
-    // << SỬA PHƯƠNG THỨC NÀY >>
     public boolean addAccount(Account account) {
-        // Câu lệnh SQL bây giờ phải bao gồm user_data_fk_id
         String sql = "INSERT INTO account (username, password, role, user_data_fk_id) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, account.getUsername());
-            pstmt.setString(2, account.getPassword()); // Mật khẩu đã băm
+            pstmt.setString(2, account.getPassword()); 
 
             if (account.getRole() != null) {
-                pstmt.setString(3, account.getRole().name()); // Lưu tên Enum (ADMIN, USER)
+                pstmt.setString(3, account.getRole().name()); 
             } else {
-                pstmt.setNull(3, Types.VARCHAR); // Hoặc một giá trị mặc định nếu role không được null trong DB
+                pstmt.setNull(3, Types.VARCHAR); 
                 System.err.println("Cảnh báo DAO: Thêm Account với Role là null cho username: " + account.getUsername());
             }
-            // Đảm bảo account.getUserId() trả về ID của UserData liên quan
-            if (account.getUserId() != 0) { // ID 0 có thể coi là không hợp lệ hoặc không có liên kết
+           
+            if (account.getUserId() != 0) { 
                 pstmt.setInt(4, account.getUserId());
             } else {
-                pstmt.setNull(4, Types.INTEGER); // Nếu userId là 0, có thể bạn muốn lưu NULL
+                pstmt.setNull(4, Types.INTEGER); 
                 System.err.println("Cảnh báo DAO: Thêm Account với user_data_fk_id là 0/NULL cho username: " + account.getUsername());
             }
 
@@ -111,31 +105,20 @@ public class AccountDAO {
         }
     }
 
-    // << SỬA PHƯƠNG THỨC NÀY (NẾU CẦN CẬP NHẬT user_data_fk_id) >>
     public boolean updateAccount(Account account) {
-        // Nếu bạn KHÔNG BAO GIỜ thay đổi user_data_fk_id sau khi tạo, câu SQL cũ vẫn ổn.
-        // Nếu bạn CÓ THỂ thay đổi user_data_fk_id, cần thêm nó vào câu SQL.
-        // Hiện tại, giả sử chỉ cập nhật password và role.
+
         String sql = "UPDATE account SET password = ?, role = ? WHERE username = ?";
-        // Nếu muốn cập nhật cả user_data_fk_id:
-        // String sql = "UPDATE account SET password = ?, role = ?, user_data_fk_id = ? WHERE username = ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, account.getPassword()); // Mật khẩu đã băm
+            pstmt.setString(1, account.getPassword()); 
             if (account.getRole() != null) {
                 pstmt.setString(2, account.getRole().name());
             } else {
                 pstmt.setNull(2, Types.VARCHAR);
             }
-            // Nếu muốn cập nhật user_data_fk_id:
-            // if (account.getUserId() != 0) {
-            //     pstmt.setInt(3, account.getUserId());
-            // } else {
-            //     pstmt.setNull(3, Types.INTEGER);
-            // }
-            // pstmt.setString(CHỈ_SỐ_CỦA_USERNAME, account.getUsername()); // Chỉ số sẽ thay đổi nếu thêm user_data_fk_id
+
             pstmt.setString(3, account.getUsername());
 
 
@@ -161,8 +144,6 @@ public class AccountDAO {
         }
     }
 
-    // Phương thức lấy Account bằng UserData ID (khóa ngoại user_data_fk_id)
-    // (Đã thêm ở câu trả lời trước, đảm bảo nó tồn tại và đúng)
     public Account getAccountByUserId(int userId) {
         String sql = "SELECT id, username, password, role, user_data_fk_id FROM account WHERE user_data_fk_id = ?";
         System.out.println("DAO DEBUG: AccountDAO.getAccountByUserId - SQL: " + sql + " - Parameter: " + userId);
@@ -174,16 +155,14 @@ public class AccountDAO {
                 if (rs.next()) {
                     String roleStringDb = rs.getString("role");
                     Role accountRole = Role.fromString(roleStringDb);
-                    // ... (Xử lý role null nếu cần) ...
-
-                    account = new Account( // Gọi constructor 4 tham số
+                 
+                    account = new Account( 
                         rs.getString("username"),
                         rs.getString("password"),
                         accountRole,
-                        rs.getInt("user_data_fk_id") // Chính là userId được truyền vào
+                        rs.getInt("user_data_fk_id") 
                     );
-                    // Nếu Account model có trường để lưu account.id (PK của bảng account)
-                    // account.setAccountId(rs.getInt("id"));
+                   
                     System.out.println("DAO DEBUG: AccountDAO.getAccountByUserId - Tìm thấy Account: " + account.getUsername());
                 } else {
                     System.out.println("DAO DEBUG: AccountDAO.getAccountByUserId - KHÔNG tìm thấy Account cho user_data_fk_id: " + userId);

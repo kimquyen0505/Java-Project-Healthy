@@ -7,36 +7,43 @@ import com.kimquyen.healthapp.service.AssessmentService;
 import com.kimquyen.healthapp.service.QuestionService;
 import com.kimquyen.healthapp.service.UserService;
 import com.kimquyen.healthapp.util.SessionManager;
+import com.kimquyen.healthapp.util.UIConstants;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+// import javax.swing.border.TitledBorder; // Nếu muốn dùng lại TitledBorder cho statsLabel
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class AdminDashboardPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-
-    private JButton manageUsersButton;
-    private JButton manageQuestionsButton;
-    private JButton manageSponsorsButton;
-    private JButton viewGlobalReportsButton; // Nút này sẽ được cập nhật
 
     private JLabel welcomeAdminLabel;
     private JLabel statsLabel;
 
     private MainFrame mainFrame;
     private UserService userService;
-    private QuestionService questionService;
-    private AssessmentService assessmentService;
+    // QuestionService và AssessmentService không còn được dùng trực tiếp trong panel này
+    // nếu các chức năng của chúng được gọi qua các panel quản lý tương ứng.
 
     public AdminDashboardPanel(MainFrame mainFrame, UserService userService,
                                QuestionService questionService, AssessmentService assessmentService) {
         this.mainFrame = mainFrame;
         this.userService = userService;
-        this.questionService = questionService;
-        this.assessmentService = assessmentService;
 
-        setLayout(new BorderLayout(10, 10));
-        setBorder(new EmptyBorder(15, 15, 15, 15));
+        // Áp dụng style Dark Mode
+        setBackground(UIConstants.COLOR_BACKGROUND_DARK);
+        setLayout(new BorderLayout(20, 20)); // Khoảng cách giữa các vùng NORTH, CENTER, SOUTH
+
+        // Sửa lỗi setBorder: Tạo EmptyBorder từ Insets
+        setBorder(new EmptyBorder(
+                UIConstants.INSETS_PANEL_PADDING.top,
+                UIConstants.INSETS_PANEL_PADDING.left,
+                UIConstants.INSETS_PANEL_PADDING.bottom,
+                UIConstants.INSETS_PANEL_PADDING.right
+        ));
 
         initComponents();
     }
@@ -44,92 +51,128 @@ public class AdminDashboardPanel extends JPanel {
     private void initComponents() {
         // Welcome Label
         welcomeAdminLabel = new JLabel("Bảng Điều Khiển Admin", JLabel.CENTER);
-        welcomeAdminLabel.setFont(new Font("Arial", Font.BOLD, 28));
+        welcomeAdminLabel.setFont(UIConstants.FONT_TITLE_LARGE);
+        welcomeAdminLabel.setForeground(UIConstants.COLOR_TEXT_LIGHT);
+        welcomeAdminLabel.setBorder(new EmptyBorder(10, 0, 25, 0)); // Padding trên/dưới
         add(welcomeAdminLabel, BorderLayout.NORTH);
 
-        // Panel cho các nút chức năng quản lý
-        JPanel buttonGridPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
+        // Panel cho các "thẻ" chức năng
+        JPanel dashboardCardsPanel = new JPanel(new GridLayout(0, 2, 25, 25)); // 2 cột, khoảng cách ngang/dọc 25
+        dashboardCardsPanel.setBackground(UIConstants.COLOR_BACKGROUND_DARK);
+        dashboardCardsPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15)); // Padding xung quanh group card
+        add(dashboardCardsPanel, BorderLayout.CENTER);
 
-        Font buttonFont = new Font("Arial", Font.PLAIN, 16);
-        Dimension buttonSize = new Dimension(220, 80); // Tăng nhẹ chiều rộng để chữ hiển thị tốt hơn
+        // Thêm các thẻ chức năng
+        dashboardCardsPanel.add(createDashboardCard(
+                "Quản Lý Người Dùng",
+                MainFrame.MANAGE_USERS_CARD,
+                "/icons/users_light.png" // Ví dụ: resources/icons/users_light.png
+        ));
+        dashboardCardsPanel.add(createDashboardCard(
+                "Quản Lý Câu Hỏi",
+                MainFrame.MANAGE_QUESTIONS_CARD,
+                "/icons/questions_light.png"
+        ));
+        dashboardCardsPanel.add(createDashboardCard(
+                "Quản Lý Nhà Tài Trợ",
+                MainFrame.MANAGE_SPONSORS_CARD,
+                "/icons/sponsors_light.png"
+        ));
+        dashboardCardsPanel.add(createDashboardCard(
+                "Xem Báo Cáo Tổng Thể",
+                MainFrame.GLOBAL_REPORTS_CARD,
+                "/icons/reports_light.png"
+        ));
 
-        // Quản Lý Người Dùng
-        manageUsersButton = new JButton("<html><center>Quản Lý<br>Người Dùng</center></html>");
-        manageUsersButton.setFont(buttonFont);
-        manageUsersButton.setPreferredSize(buttonSize);
-        manageUsersButton.addActionListener(e -> {
-            if (mainFrame != null) {
-                mainFrame.showPanel(MainFrame.MANAGE_USERS_CARD);
-            }
-        });
-        gbc.gridx = 0; gbc.gridy = 0;
-        buttonGridPanel.add(manageUsersButton, gbc);
-
-        // Quản Lý Câu Hỏi
-        manageQuestionsButton = new JButton("<html><center>Quản Lý<br>Câu Hỏi</center></html>");
-        manageQuestionsButton.setFont(buttonFont);
-        manageQuestionsButton.setPreferredSize(buttonSize);
-        manageQuestionsButton.addActionListener(e -> {
-            if (mainFrame != null) {
-                mainFrame.showPanel(MainFrame.MANAGE_QUESTIONS_CARD);
-            }
-        });
-        gbc.gridx = 1; gbc.gridy = 0;
-        buttonGridPanel.add(manageQuestionsButton, gbc);
-
-        // Quản Lý Nhà Tài Trợ
-        manageSponsorsButton = new JButton("<html><center>Quản Lý<br>Nhà Tài Trợ</center></html>");
-        manageSponsorsButton.setFont(buttonFont);
-        manageSponsorsButton.setPreferredSize(buttonSize);
-        manageSponsorsButton.addActionListener(e -> {
-            if (mainFrame != null) {
-                mainFrame.showPanel(MainFrame.MANAGE_SPONSORS_CARD);
-            }
-        });
-        gbc.gridx = 0; gbc.gridy = 1;
-        buttonGridPanel.add(manageSponsorsButton, gbc);
-
-        // Xem Báo Cáo Tổng Thể
-        viewGlobalReportsButton = new JButton("<html><center>Xem Báo Cáo<br>Tổng Thể</center></html>");
-        viewGlobalReportsButton.setFont(buttonFont);
-        viewGlobalReportsButton.setPreferredSize(buttonSize);
-        viewGlobalReportsButton.addActionListener(e -> {
-            if (mainFrame != null) {
-                mainFrame.showPanel(MainFrame.GLOBAL_REPORTS_CARD); // <<==== SỬA Ở ĐÂY
-            }
-            // XÓA HOẶC COMMENT DÒNG NÀY:
-            // JOptionPane.showMessageDialog(this, "Chức năng Xem Báo cáo tổng thể đang được phát triển.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-        });
-        gbc.gridx = 1; gbc.gridy = 1;
-        buttonGridPanel.add(viewGlobalReportsButton, gbc);
-
-        add(buttonGridPanel, BorderLayout.CENTER);
 
         // Panel cho thống kê
         statsLabel = new JLabel("Đang tải thống kê...", JLabel.CENTER);
-        statsLabel.setFont(new Font("Arial", Font.ITALIC, 14));
-        statsLabel.setBorder(BorderFactory.createTitledBorder("Thông tin chung"));
+        statsLabel.setFont(UIConstants.FONT_PRIMARY_REGULAR.deriveFont(16f));
+        statsLabel.setForeground(UIConstants.COLOR_TEXT_SECONDARY_LIGHT);
+        statsLabel.setBorder(new EmptyBorder(20, 0, 10, 0)); // Padding trên/dưới
         add(statsLabel, BorderLayout.SOUTH);
     }
 
-    private void loadAdminStats() {
-        if (userService != null && assessmentService != null) {
+    // Helper method để tạo "thẻ" dashboard
+    private JPanel createDashboardCard(String title, String actionCommand, String iconResourcePath) {
+        JPanel card = new JPanel(new BorderLayout(10, 15)); // Khoảng cách giữa icon và text (ngang, dọc)
+        card.setBackground(UIConstants.COLOR_COMPONENT_BACKGROUND_DARK);
+        card.setPreferredSize(new Dimension(280, 160)); // Kích thước tùy chỉnh cho card
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(UIConstants.COLOR_BORDER_DARK, 1),
+                new EmptyBorder(20, 20, 20, 20)
+        ));
+        // Bo tròn góc (nếu FlatLaf được sử dụng và hỗ trợ)
+        card.putClientProperty("FlatLaf.style", "arc: 10"); // Giá trị arc điều chỉnh độ bo tròn
+
+        // Icon (nếu có)
+        if (iconResourcePath != null && !iconResourcePath.isEmpty()) {
             try {
-                int totalUsers = userService.getAllUserData().size();
+                java.net.URL iconURL = getClass().getResource(iconResourcePath);
+                if (iconURL != null) {
+                    ImageIcon icon = new ImageIcon(iconURL);
+                    // Resize icon nếu muốn kích thước đồng nhất, ví dụ 48x48
+                    Image img = icon.getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH);
+                    JLabel iconLabel = new JLabel(new ImageIcon(img));
+                    iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                    // Đặt icon ở trên text
+                    card.add(iconLabel, BorderLayout.NORTH);
+                } else {
+                    System.err.println("AdminDashboardPanel: Không tìm thấy resource icon: " + iconResourcePath);
+                }
+            } catch (Exception e) {
+                System.err.println("AdminDashboardPanel: Lỗi khi tải icon: " + iconResourcePath + " - " + e.getMessage());
+            }
+        }
+
+        JLabel titleLabel = new JLabel("<html><div style='text-align: center;'>" + title.replace("<br>", "<br/>") + "</div></html>", SwingConstants.CENTER);
+        titleLabel.setFont(UIConstants.FONT_TITLE_MEDIUM.deriveFont(17f)); // Điều chỉnh font
+        titleLabel.setForeground(UIConstants.COLOR_TEXT_LIGHT);
+        // Nếu icon ở NORTH, text có thể ở CENTER hoặc SOUTH
+        card.add(titleLabel, BorderLayout.CENTER);
+
+        card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        card.addMouseListener(new MouseAdapter() {
+            final Color originalBg = UIConstants.COLOR_COMPONENT_BACKGROUND_DARK; // Lưu màu nền gốc
+            final Color hoverBg = UIConstants.COLOR_ACCENT_BLUE.darker();      // Màu khi hover
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (mainFrame != null) {
+                    mainFrame.showPanel(actionCommand);
+                }
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                card.setBackground(hoverBg);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                card.setBackground(originalBg);
+            }
+        });
+        return card;
+    }
+
+    private void loadAdminStats() {
+        if (userService != null) {
+            try {
+                // Giả sử userService.getAllUserData() trả về List<UserData>
+                // và bạn muốn lấy kích thước của nó.
+                // Nếu phương thức này có thể trả về null, cần kiểm tra null.
+                List<UserData> allUsers = userService.getAllUserData();
+                int totalUsers = (allUsers != null) ? allUsers.size() : 0;
                 statsLabel.setText("Tổng số người dùng: " + totalUsers);
             } catch (Exception e) {
-                statsLabel.setText("Lỗi khi tải thống kê.");
-                System.err.println("Lỗi khi tải thống kê admin: " + e.getMessage());
-                e.printStackTrace();
+                statsLabel.setText("Lỗi khi tải thống kê người dùng.");
+                System.err.println("AdminDashboardPanel: Lỗi khi tải thống kê admin: " + e.getMessage());
+                e.printStackTrace(); // In stack trace để debug
             }
         } else {
-            statsLabel.setText("Không thể tải thống kê do service chưa sẵn sàng.");
-            System.err.println("AdminDashboardPanel: userService hoặc assessmentService là null.");
+            statsLabel.setText("Không thể tải thống kê (UserService chưa sẵn sàng).");
+            System.err.println("AdminDashboardPanel: userService là null.");
         }
     }
 
@@ -137,15 +180,16 @@ public class AdminDashboardPanel extends JPanel {
         SessionManager session = SessionManager.getInstance();
         if (session.isLoggedIn() && session.getCurrentAccount() != null && session.getCurrentAccount().getRole() == Role.ADMIN) {
             UserData adminUserData = session.getCurrentUserData();
+            String adminName = "Admin"; // Tên mặc định
             if (adminUserData != null && adminUserData.getName() != null && !adminUserData.getName().trim().isEmpty()) {
-                welcomeAdminLabel.setText("Chào mừng Admin: " + adminUserData.getName() + "!");
+                adminName = adminUserData.getName();
             } else if (session.getCurrentAccount().getUsername() != null) {
-                welcomeAdminLabel.setText("Chào mừng Admin: " + session.getCurrentAccount().getUsername() + "!");
-            } else {
-                 welcomeAdminLabel.setText("Chào mừng Admin!");
+                adminName = session.getCurrentAccount().getUsername();
             }
+            welcomeAdminLabel.setText("Chào mừng " + adminName + "!");
         } else {
-            welcomeAdminLabel.setText("Bảng Điều Khiển Admin (Lỗi Session)");
+            welcomeAdminLabel.setText("Bảng Điều Khiển Admin");
+            // Cân nhắc việc kiểm tra và có thể gọi mainFrame.performLogout() nếu session không hợp lệ
         }
         loadAdminStats();
         System.out.println("AdminDashboardPanel is now visible.");

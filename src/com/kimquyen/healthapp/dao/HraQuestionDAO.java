@@ -13,7 +13,6 @@ import java.util.Map;
 
 public class HraQuestionDAO {
 
-    // getAllQuestions() và getQuestionById() giữ nguyên như bạn đã có, chúng hoạt động tốt.
     public List<HraQuestion> getAllQuestions() {
         Map<Integer, HraQuestion> questionMap = new LinkedHashMap<>();
         String sql = "SELECT question_id, type, title, text, options, score " +
@@ -87,36 +86,28 @@ public class HraQuestionDAO {
         return question;
     }
 
-
-    // --- CRUD MỚI ---
-    // Phương thức này cần tạo question_id mới nếu chưa có.
-    // Giả sử question_id không phải là auto-increment trong hra_qna_scores.
-    // Đây là một điểm yếu của schema hiện tại cho việc CRUD.
     private int getNextQuestionId(Connection conn) throws SQLException {
-        // Cẩn thận: Cách này không an toàn với truy cập đồng thời nếu không có lock.
-        // Một sequence trong DB hoặc một bảng riêng để quản lý ID sẽ tốt hơn.
         String sql = "SELECT MAX(question_id) FROM hihi.hra_qna_scores";
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getInt(1) + 1;
             }
-            return 1; // Nếu bảng rỗng
+            return 1; 
         }
     }
 
     public boolean addQuestion(HraQuestion question) {
         if (question == null) return false;
         Connection conn = null;
-        // Câu lệnh SQL để chèn một dòng vào hra_qna_scores
         String insertSql = "INSERT INTO hihi.hra_qna_scores (question_id, type, title, text, options, score) VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
             conn = DatabaseUtil.getConnection();
-            conn.setAutoCommit(false); // Bắt đầu transaction
+            conn.setAutoCommit(false); 
 
-            int questionIdToUse = getNextQuestionId(conn); // Tạo ID mới
-            question.setQuestionId(questionIdToUse); // Gán ID vào model để trả về nếu cần
+            int questionIdToUse = getNextQuestionId(conn); 
+            question.setQuestionId(questionIdToUse); 
 
             try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
                 if (HraQuestion.TYPE_TEXT_INPUT.equals(question.getType())) {
@@ -124,15 +115,14 @@ public class HraQuestionDAO {
                     pstmt.setString(2, question.getType());
                     pstmt.setString(3, question.getTitle());
                     pstmt.setString(4, question.getText());
-                    pstmt.setNull(5, Types.VARCHAR); // options là null cho TEXT_INPUT
+                    pstmt.setNull(5, Types.VARCHAR); 
                     if (question.getGeneralScore() != null) {
                         pstmt.setInt(6, question.getGeneralScore());
                     } else {
-                         // Hoặc throw lỗi nếu điểm chung là bắt buộc cho TEXT_INPUT
                         pstmt.setNull(6, Types.INTEGER);
                     }
                     pstmt.addBatch();
-                } else { // SINGLE_CHOICE or MULTIPLE_CHOICE
+                } else { 
                     if (question.getChoices() == null || question.getChoices().isEmpty()) {
                         conn.rollback();
                         System.err.println("DAO: Câu hỏi trắc nghiệm phải có lựa chọn.");
@@ -141,9 +131,9 @@ public class HraQuestionDAO {
                     for (OptionChoice choice : question.getChoices()) {
                         pstmt.setInt(1, questionIdToUse);
                         pstmt.setString(2, question.getType());
-                        pstmt.setString(3, question.getTitle()); // Title và Text có thể lặp lại
+                        pstmt.setString(3, question.getTitle()); 
                         pstmt.setString(4, question.getText());
-                        pstmt.setString(5, choice.getOptionLabel()); // optionLabel là tên hiển thị
+                        pstmt.setString(5, choice.getOptionLabel()); 
                         pstmt.setInt(6, choice.getOptionScore());
                         pstmt.addBatch();
                     }
@@ -181,21 +171,18 @@ public class HraQuestionDAO {
             return false;
         }
         Connection conn = null;
-        // Câu lệnh SQL để chèn một dòng vào hra_qna_scores (giống add)
         String insertSql = "INSERT INTO hihi.hra_qna_scores (question_id, type, title, text, options, score) VALUES (?, ?, ?, ?, ?, ?)";
         String deleteSql = "DELETE FROM hihi.hra_qna_scores WHERE question_id = ?";
 
         try {
             conn = DatabaseUtil.getConnection();
-            conn.setAutoCommit(false); // Bắt đầu transaction
+            conn.setAutoCommit(false); 
 
-            // 1. Xóa tất cả các dòng cũ của câu hỏi này
             try (PreparedStatement deletePstmt = conn.prepareStatement(deleteSql)) {
                 deletePstmt.setInt(1, question.getQuestionId());
                 deletePstmt.executeUpdate();
             }
 
-            // 2. Thêm lại câu hỏi với thông tin mới (giống logic của addQuestion, nhưng dùng questionId đã có)
             try (PreparedStatement insertPstmt = conn.prepareStatement(insertSql)) {
                 if (HraQuestion.TYPE_TEXT_INPUT.equals(question.getType())) {
                     insertPstmt.setInt(1, question.getQuestionId());
@@ -258,7 +245,6 @@ public class HraQuestionDAO {
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, questionId);
-            // Không cần transaction vì chỉ là một lệnh DELETE
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa HraQuestion ID " + questionId + ": " + e.getMessage());

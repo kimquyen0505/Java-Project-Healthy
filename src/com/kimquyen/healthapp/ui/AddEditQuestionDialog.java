@@ -1,4 +1,3 @@
-// com/kimquyen/healthapp/ui/AddEditQuestionDialog.java
 package com.kimquyen.healthapp.ui;
 
 import com.kimquyen.healthapp.model.HraQuestion;
@@ -17,8 +16,8 @@ public class AddEditQuestionDialog extends JDialog {
     private JTextField titleField;
     private JTextArea questionTextField;
     private JComboBox<String> typeComboBox;
-    private JTextField generalScoreField; // For TEXT_INPUT
-    private JPanel optionsPanel; // For SINGLE_CHOICE, MULTIPLE_CHOICE
+    private JTextField generalScoreField; 
+    private JPanel optionsPanel; 
     private JTable optionsTable;
     private DefaultTableModel optionsTableModel;
 
@@ -39,9 +38,8 @@ public class AddEditQuestionDialog extends JDialog {
         if (isEditMode) {
             populateFields();
         } else {
-            // Nếu thêm mới, questionId = 0 hoặc không set
-            // currentQuestion có thể được khởi tạo rỗng để lấy type, title,...
-            this.currentQuestion = new HraQuestion(); // Để lưu dữ liệu mới
+
+            this.currentQuestion = new HraQuestion();
         }
         updateFieldsVisibilityBasedOnType();
         pack();
@@ -101,12 +99,11 @@ public class AddEditQuestionDialog extends JDialog {
         optionsTableModel = new DefaultTableModel(new Object[]{"Lựa chọn (*)", "Điểm (*)"}, 0){
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 1) return Integer.class; // Cột điểm là số
+                if (columnIndex == 1) return Integer.class; 
                 return String.class;
             }
         };
         optionsTable = new JTable(optionsTableModel);
-        // Cho phép sửa trực tiếp trên bảng
         optionsTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
 
@@ -153,15 +150,15 @@ public class AddEditQuestionDialog extends JDialog {
         if (HraQuestion.TYPE_TEXT_INPUT.equals(selectedType)) {
             generalScoreField.setVisible(true);
             optionsPanel.setVisible(false);
-            generalScoreField.getParent().getParent().revalidate(); // Revalidate formPanel
+            generalScoreField.getParent().getParent().revalidate(); 
             generalScoreField.getParent().getParent().repaint();
-        } else { // SINGLE_CHOICE or MULTIPLE_CHOICE
+        } else { 
             generalScoreField.setVisible(false);
             optionsPanel.setVisible(true);
-            optionsPanel.getParent().getParent().revalidate(); // Revalidate formPanel
+            optionsPanel.getParent().getParent().revalidate(); 
             optionsPanel.getParent().getParent().repaint();
         }
-        pack(); // Có thể cần pack lại dialog
+        pack(); 
     }
 
     private void populateFields() {
@@ -169,8 +166,7 @@ public class AddEditQuestionDialog extends JDialog {
         titleField.setText(currentQuestion.getTitle());
         questionTextField.setText(currentQuestion.getText());
         typeComboBox.setSelectedItem(currentQuestion.getType());
-        typeComboBox.setEnabled(!isEditMode); // Không cho sửa Type khi edit, vì cấu trúc lưu điểm khác nhau
-
+        typeComboBox.setEnabled(!isEditMode); 
         if (HraQuestion.TYPE_TEXT_INPUT.equals(currentQuestion.getType())) {
             generalScoreField.setText(currentQuestion.getGeneralScore() != null ? String.valueOf(currentQuestion.getGeneralScore()) : "");
         } else {
@@ -181,7 +177,7 @@ public class AddEditQuestionDialog extends JDialog {
                 }
             }
         }
-        updateFieldsVisibilityBasedOnType(); // Gọi lại để đảm bảo visibility đúng
+        updateFieldsVisibilityBasedOnType(); 
     }
 
     private void performSave() {
@@ -195,7 +191,7 @@ public class AddEditQuestionDialog extends JDialog {
             return;
         }
 
-        if (currentQuestion == null) currentQuestion = new HraQuestion(); // Khởi tạo nếu chưa có (chế độ thêm mới)
+        if (currentQuestion == null) currentQuestion = new HraQuestion(); 
         
         if(isEditMode && currentQuestion.getQuestionId() == 0){
              JOptionPane.showMessageDialog(this, "Lỗi: Không có ID câu hỏi để sửa.", "Lỗi dữ liệu", JOptionPane.ERROR_MESSAGE);
@@ -206,7 +202,7 @@ public class AddEditQuestionDialog extends JDialog {
         currentQuestion.setTitle(title);
         currentQuestion.setText(qText);
         currentQuestion.setType(qType);
-        currentQuestion.getChoices().clear(); // Xóa choice cũ trước khi thêm mới từ bảng
+        currentQuestion.getChoices().clear(); 
 
         if (HraQuestion.TYPE_TEXT_INPUT.equals(qType)) {
             String scoreStr = generalScoreField.getText().trim();
@@ -222,9 +218,9 @@ public class AddEditQuestionDialog extends JDialog {
                 generalScoreField.requestFocus();
                 return;
             }
-        } else { // SINGLE_CHOICE or MULTIPLE_CHOICE
-            currentQuestion.setGeneralScore(null); // Đảm bảo generalScore là null cho loại này
-            if (optionsTable.isEditing()) { // Hoàn tất việc sửa trên bảng nếu có
+        } else { 
+            currentQuestion.setGeneralScore(null); 
+            if (optionsTable.isEditing()) { 
                 optionsTable.getCellEditor().stopCellEditing();
             }
             if (optionsTableModel.getRowCount() == 0) {
@@ -233,7 +229,7 @@ public class AddEditQuestionDialog extends JDialog {
             }
             for (int i = 0; i < optionsTableModel.getRowCount(); i++) {
                 String optionLabel = (String) optionsTableModel.getValueAt(i, 0);
-                Object scoreObj = optionsTableModel.getValueAt(i, 1); // Có thể là String hoặc Integer tùy JTable
+                Object scoreObj = optionsTableModel.getValueAt(i, 1);
 
                 if (optionLabel == null || optionLabel.trim().isEmpty()) {
                     JOptionPane.showMessageDialog(this, "Nội dung lựa chọn ở dòng " + (i + 1) + " không được để trống.", "Lỗi nhập liệu", JOptionPane.WARNING_MESSAGE);
@@ -257,7 +253,6 @@ public class AddEditQuestionDialog extends JDialog {
                     optionsTable.changeSelection(i,1, false, false);
                     return;
                 }
-                // Tạo optionValue tự động (đơn giản hóa)
                 String optionValue = optionLabel.trim().toLowerCase().replaceAll("\\s+", "_").replaceAll("[^a-z0-9_]", "");
                 if(optionValue.isEmpty()) optionValue = "opt_" + System.currentTimeMillis() % 1000 + "_" + i;
 

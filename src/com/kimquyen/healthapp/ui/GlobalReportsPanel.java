@@ -1,4 +1,3 @@
-// com/kimquyen/healthapp/ui/GlobalReportsPanel.java
 package com.kimquyen.healthapp.ui;
 
 import com.kimquyen.healthapp.service.AssessmentService;
@@ -28,8 +27,7 @@ import java.util.ArrayList; // Cần import này
 import java.util.Map;
 import java.util.List;
 import java.util.Collections;
-// import java.util.Comparator; // Không cần cho 2 biểu đồ này nếu DAO/Service đã sắp xếp
-// import java.util.LinkedHashMap; // Không cần nữa
+
 
 public class GlobalReportsPanel extends JPanel {
     private static final long serialVersionUID = 1L;
@@ -56,7 +54,7 @@ public class GlobalReportsPanel extends JPanel {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
         add(titleLabel, BorderLayout.NORTH);
 
-        chartsContainerPanel = new JPanel(new GridLayout(0, 2, 15, 15)); // Giữ 2 cột
+        chartsContainerPanel = new JPanel(new GridLayout(0, 2, 15, 15)); 
         JScrollPane scrollPane = new JScrollPane(chartsContainerPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -131,30 +129,24 @@ public class GlobalReportsPanel extends JPanel {
             BarRenderer renderer = (BarRenderer) plot.getRenderer();
             renderer.setSeriesPaint(0, new Color(79, 129, 189));
             renderer.setDrawBarOutline(true);
-            // Sử dụng StandardBarPainter để tránh hiệu ứng gradient (tùy chọn)
             renderer.setBarPainter(new org.jfree.chart.renderer.category.StandardBarPainter());
 
 
-            // Hiển thị giá trị trên cột (Sử dụng setBase... nếu setItem... không có)
-            // Thử cả hai cách nếu một trong hai báo lỗi
+
             try {
-                 // API mới hơn (JFreeChart 1.0.14 trở lên thường có cái này)
                 renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
                 renderer.setBaseItemLabelsVisible(true);
             } catch (NoSuchMethodError | AbstractMethodError e) {
-                // API cũ hơn có thể dùng setItemLabelGenerator cho từng series
-                // Hoặc bạn có thể cần một cách khác để hiển thị label nếu phiên bản quá cũ
+
                 System.err.println("Warning: setBaseItemLabelGenerator/Visible not found, trying older API or skipping item labels for BarChart.");
-                // renderer.setItemLabelGenerator(new StandardCategoryItemLabelGenerator());
-                // renderer.setItemLabelsVisible(true);
-                 try { // Thử setItemLabelGenerator nếu setBaseItemLabelGenerator không có
+
+                 try { 
                     renderer.setItemLabelGenerator(new StandardCategoryItemLabelGenerator());
                     renderer.setItemLabelsVisible(true);
                 } catch (NoSuchMethodError | AbstractMethodError e2) {
                     System.err.println("Also failed to use setItemLabelGenerator/Visible. Item labels for BarChart might not be shown.");
                 }
             }
-
 
             CategoryAxis domainAxis = plot.getDomainAxis();
             domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
@@ -167,9 +159,8 @@ public class GlobalReportsPanel extends JPanel {
             chartsContainerPanel.add(createNoDataPanel("Không có dữ liệu người dùng theo nhà tài trợ.", "Người Dùng Theo Nhà Tài Trợ"));
         }
 
-        // BỎ BIỂU ĐỒ ĐƯỜNG
+ 
 
-        // Thống kê tổng số người dùng (Có thể giữ lại hoặc bỏ nếu muốn 2 biểu đồ + 2 ô trống)
         JPanel userStatsPanel = new JPanel(new GridBagLayout());
         userStatsPanel.setPreferredSize(PREFERRED_CELL_SIZE);
         userStatsPanel.setBorder(BorderFactory.createTitledBorder("Thống Kê Người Dùng Chung"));
@@ -179,9 +170,8 @@ public class GlobalReportsPanel extends JPanel {
             totalUsersLabel.setFont(new Font("Arial", Font.BOLD, 20));
             GridBagConstraints gbc = new GridBagConstraints();
             userStatsPanel.add(totalUsersLabel, gbc);
-            chartsContainerPanel.add(userStatsPanel); // Thêm vào container
+            chartsContainerPanel.add(userStatsPanel); 
         } catch (Exception e) {
-            // Nếu lỗi, thêm panel thông báo lỗi thay vì panel thống kê
             chartsContainerPanel.add(createNoDataPanel("Lỗi tải thống kê người dùng.", "Thống Kê Người Dùng"));
             System.err.println("Lỗi khi lấy tổng số người dùng cho báo cáo: " + e.getMessage());
         }
@@ -191,18 +181,10 @@ public class GlobalReportsPanel extends JPanel {
         int numComponents = chartsContainerPanel.getComponentCount();
         GridLayout layout = (GridLayout) chartsContainerPanel.getLayout();
         int columns = layout.getColumns();
-        int totalCells = layout.getRows() * columns; // Nếu rows = 0, thì totalCells dựa trên numComponents
+        int totalCells = layout.getRows() * columns; 
 
-        // Nếu bạn muốn luôn có 4 ô (2x2), và hiện tại có 3 components (2 chart + 1 stats)
-        // thì cần 1 placeholder.
-        // Nếu chỉ có 2 chart, thì cần 2 placeholder.
-        // Hoặc đơn giản là để GridLayout tự điều chỉnh.
-        // Ví dụ: nếu bạn chỉ muốn hiển thị 2 biểu đồ và không có gì khác,
-        // và GridLayout là (0,2), nó sẽ tự thành 1 hàng 2 cột.
-
-        if (columns > 0 ) { // Chỉ thêm placeholder nếu có cột xác định
-             // Ví dụ, nếu mục tiêu là 4 ô (2 biểu đồ + 1 thống kê + 1 trống)
-            int targetComponents = 4; // Hoặc 2 nếu bạn chỉ muốn 2 biểu đồ
+        if (columns > 0 ) { 
+            int targetComponents = 4; 
             if (numComponents < targetComponents && numComponents % columns != 0) {
                  int placeholdersNeeded = targetComponents - numComponents;
                  for (int i = 0; i < placeholdersNeeded; i++) {
@@ -211,7 +193,6 @@ public class GlobalReportsPanel extends JPanel {
                     chartsContainerPanel.add(placeholder);
                 }
             } else if (numComponents < targetComponents && numComponents % columns == 0 && numComponents > 0) {
-                // Trường hợp có 2 components, muốn thành 4 (thêm 2 placeholder)
                 int placeholdersNeeded = targetComponents - numComponents;
                  for (int i = 0; i < placeholdersNeeded; i++) {
                     JPanel placeholder = new JPanel();
@@ -250,12 +231,11 @@ public class GlobalReportsPanel extends JPanel {
     }
 
     private DefaultCategoryDataset createUserBySponsorDataset() {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset(); // Đảm bảo import java.util.ArrayList
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         if (userService == null) return dataset;
 
         Map<String, Long> userDistribution = userService.getUserDistributionBySponsor();
         if (userDistribution != null && !userDistribution.isEmpty()) {
-            // Sắp xếp theo tên nhà tài trợ để thứ tự trên biểu đồ ổn định
             List<Map.Entry<String, Long>> sortedEntries = new ArrayList<>(userDistribution.entrySet());
             sortedEntries.sort(Map.Entry.comparingByKey());
 
@@ -265,8 +245,6 @@ public class GlobalReportsPanel extends JPanel {
         }
         return dataset;
     }
-
-    // Bỏ phương thức createAssessmentTrendDataset()
 
     public void panelVisible() {
         System.out.println("GlobalReportsPanel is now visible. Loading reports (2 charts version)...");

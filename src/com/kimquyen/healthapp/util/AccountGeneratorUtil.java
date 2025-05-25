@@ -1,4 +1,3 @@
-// package com.kimquyen.healthapp.util; // Hoặc một package phù hợp
 package com.kimquyen.healthapp.util;
 
 import com.kimquyen.healthapp.dao.AccountDAO;
@@ -19,8 +18,7 @@ public class AccountGeneratorUtil {
         AccountDAO accountDAO = new AccountDAO();
         PasswordHashingService passwordHashingService = new BCryptPasswordHashingServiceImpl();
 
-        // Mật khẩu mặc định cho các tài khoản mới được tạo tự động
-        String defaultPlainPassword = "user123"; // CHỌN MỘT MẬT KHẨU MẠNH HƠN CHO THỰC TẾ!
+        String defaultPlainPassword = "user123"; 
         String defaultHashedPassword = passwordHashingService.hashPassword(defaultPlainPassword);
 
         System.out.println("Bắt đầu quá trình tạo Account cho UserData chưa có...");
@@ -49,15 +47,12 @@ public class AccountGeneratorUtil {
                 continue;
             }
 
-            // Tạo username mặc định từ UserData.name
-            // Ví dụ: "John Doe" -> "johndoe" hoặc "john_doe"
-            // Cần đảm bảo username là duy nhất
             String baseUsername = generateUsernameFromName(userData.getName());
             String finalUsername = baseUsername;
             int attempt = 0;
             while (accountDAO.getAccountByUsername(finalUsername) != null) {
                 attempt++;
-                finalUsername = baseUsername + attempt; // Thêm số nếu username đã tồn tại
+                finalUsername = baseUsername + attempt; 
             }
 
             System.out.println("Đang xử lý UserData ID: " + userData.getId() + " (" + userData.getName() + ")");
@@ -67,7 +62,7 @@ public class AccountGeneratorUtil {
                     finalUsername,
                     defaultHashedPassword,
                     Role.USER, // Vai trò mặc định là USER
-                    userData.getId() // Liên kết với UserData ID
+                    userData.getId() 
             );
 
             if (accountDAO.addAccount(newAccount)) {
@@ -92,17 +87,15 @@ public class AccountGeneratorUtil {
      */
     private static String generateUsernameFromName(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) {
-            return "user" + System.currentTimeMillis() % 10000; // Username ngẫu nhiên nếu tên rỗng
+            return "user" + System.currentTimeMillis() % 10000; 
         }
-        // Loại bỏ dấu, chuyển thành chữ thường, thay thế khoảng trắng và một số ký tự đặc biệt bằng rỗng hoặc gạch dưới
-        String username = fullName.trim().toLowerCase(Locale.ENGLISH); // Dùng Locale.ENGLISH để xử lý nhất quán
-        username = username.replaceAll("\\s+", ""); // Bỏ hết khoảng trắng
-        username = username.replaceAll("[^a-z0-9]", ""); // Chỉ giữ lại chữ cái thường và số
+        String username = fullName.trim().toLowerCase(Locale.ENGLISH);
+        username = username.replaceAll("\\s+", ""); 
+        username = username.replaceAll("[^a-z0-9]", "");
 
         if (username.isEmpty()) {
             return "user" + System.currentTimeMillis() % 10000;
         }
-        // Giới hạn độ dài nếu cần, ví dụ 20 ký tự
         return username.length() > 20 ? username.substring(0, 20) : username;
     }
 }
