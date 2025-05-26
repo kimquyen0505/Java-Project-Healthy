@@ -5,7 +5,9 @@ import com.kimquyen.healthapp.util.DatabaseUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HraResponseDAO {
 
@@ -98,5 +100,29 @@ public class HraResponseDAO {
             e.printStackTrace();
             return false;
         }
+    }
+    public Map<String, Long> countResponsesForSingleQuestion(int questionId) {
+        Map<String, Long> counts = new HashMap<>();
+        String sql = "SELECT response, COUNT(*) as count FROM hra_responses WHERE question_id = ? GROUP BY response";
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, questionId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                String responseText = rs.getString("response");
+                if (responseText != null) { // Quan trọng: Xử lý responseText có thể là null
+                     counts.put(responseText, rs.getLong("count"));
+                } else {
+                     // Tùy chọn: Xử lý trường hợp response là NULL trong DB, ví dụ:
+                     // counts.put("Chưa trả lời/NULL", counts.getOrDefault("Chưa trả lời/NULL", 0L) + rs.getLong("count"));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi SQL khi đếm câu trả lời cho câu hỏi ID " + questionId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+        return counts;
     }
 }

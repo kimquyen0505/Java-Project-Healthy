@@ -1,10 +1,9 @@
-// package com.kimquyen.healthapp.ui;
 package com.kimquyen.healthapp.ui;
 
 import com.kimquyen.healthapp.model.UserData;
-import com.kimquyen.healthapp.service.AssessmentService; // Vẫn cần cho constructor
+import com.kimquyen.healthapp.service.AssessmentService; // Vẫn giữ nếu MainFrame yêu cầu khi tạo UserDashboardPanel
 import com.kimquyen.healthapp.util.SessionManager;
-import com.kimquyen.healthapp.util.UIConstants;
+import com.kimquyen.healthapp.util.UIConstants; // Đảm bảo bạn có lớp này
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -17,30 +16,19 @@ public class UserDashboardPanel extends JPanel {
 
     private JLabel welcomeLabel;
     private MainFrame mainFrame;
-    // AssessmentService không được sử dụng trực tiếp trong panel này nữa
-    // nhưng vẫn cần truyền vào từ MainFrame, vì constructor của UserDashboardPanel yêu cầu nó.
-    // Bạn có thể xem xét loại bỏ nó khỏi constructor nếu nó thực sự không cần thiết.
+    // AssessmentService có thể không cần thiết nếu panel này không dùng nó trực tiếp
+    // Tuy nhiên, constructor hiện tại yêu cầu nó.
+    @SuppressWarnings("unused") // Để tránh cảnh báo "unused" nếu không dùng đến
     private AssessmentService assessmentService;
 
 
     public UserDashboardPanel(MainFrame mainFrame, AssessmentService assessmentService) {
         this.mainFrame = mainFrame;
-        this.assessmentService = assessmentService; // Gán giá trị
+        this.assessmentService = assessmentService;
 
-        // Áp dụng style Dark Mode
-        setBackground(UIConstants.COLOR_BACKGROUND_DARK);
-        setLayout(new BorderLayout(20, 20)); // Khoảng cách giữa các vùng
-
-        // Sửa lỗi setBorder: Tạo EmptyBorder từ Insets
-        setBorder(new EmptyBorder(
-                UIConstants.INSETS_PANEL_PADDING.top,
-                UIConstants.INSETS_PANEL_PADDING.left,
-                UIConstants.INSETS_PANEL_PADDING.bottom,
-                UIConstants.INSETS_PANEL_PADDING.right
-        ));
-        // HOẶC ngắn gọn hơn nếu INSETS_PANEL_PADDING là new Insets(20,20,20,20):
-        // setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
-
+        setBackground(UIConstants.COLOR_BACKGROUND_DARK); // Sử dụng màu từ UIConstants
+        setLayout(new BorderLayout(20, 20));
+        setBorder(new EmptyBorder(UIConstants.INSETS_PANEL_PADDING)); // Sử dụng Insets trực tiếp
 
         initComponents();
     }
@@ -49,71 +37,53 @@ public class UserDashboardPanel extends JPanel {
         // Welcome Label
         welcomeLabel = new JLabel("Chào mừng!", JLabel.CENTER);
         welcomeLabel.setFont(UIConstants.FONT_TITLE_LARGE);
-        welcomeLabel.setForeground(UIConstants.COLOR_TEXT_LIGHT);
-        welcomeLabel.setBorder(new EmptyBorder(15, 0, 30, 0)); // Padding trên/dưới
+        welcomeLabel.setForeground(UIConstants.COLOR_TEXT_DARK); // Chữ tối trên nền sáng
+        welcomeLabel.setBorder(new EmptyBorder(15, 0, 30, 0));
         add(welcomeLabel, BorderLayout.NORTH);
 
         // Panel cho các "thẻ" chức năng dashboard
         JPanel dashboardCardsPanel = new JPanel();
-        dashboardCardsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 40, 30)); // Khoảng cách ngang 40, dọc 30
-        dashboardCardsPanel.setBackground(UIConstants.COLOR_BACKGROUND_DARK);
-        dashboardCardsPanel.setBorder(new EmptyBorder(20,0,0,0)); // Padding trên cho nhóm card
+        // FlowLayout để các card tự sắp xếp, có thể dùng GridLayout nếu muốn cố định số cột
+        dashboardCardsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 40, 30));
+        dashboardCardsPanel.setBackground(UIConstants.COLOR_BACKGROUND_DARK); // Cùng màu nền
+        dashboardCardsPanel.setBorder(new EmptyBorder(20,0,0,0));
         add(dashboardCardsPanel, BorderLayout.CENTER);
 
         // Thêm các thẻ chức năng
         dashboardCardsPanel.add(createDashboardCard(
                 "Làm Bài Đánh Giá Mới",
-                MainFrame.TAKE_ASSESSMENT_CARD,
-                "/icons/assessment_light.png" // Ví dụ: resources/icons/assessment_light.png
+                MainFrame.TAKE_ASSESSMENT_CARD
+                // Bỏ đường dẫn icon nếu không dùng
         ));
 
         dashboardCardsPanel.add(createDashboardCard(
                 "Xem Lịch Sử Đánh Giá",
-                MainFrame.VIEW_HISTORY_CARD,
-                "/icons/history_light.png" // Ví dụ: resources/icons/history_light.png
+                MainFrame.VIEW_HISTORY_CARD
+                // Bỏ đường dẫn icon nếu không dùng
         ));
     }
 
-    // Helper method để tạo "thẻ" dashboard
-    private JPanel createDashboardCard(String title, String actionCommand, String iconResourcePath) {
-        JPanel card = new JPanel(new BorderLayout(10, 15)); // Khoảng cách ngang, dọc giữa icon và text
-        card.setBackground(UIConstants.COLOR_COMPONENT_BACKGROUND_DARK);
-        card.setPreferredSize(new Dimension(280, 200)); // Kích thước tùy chỉnh cho card (có thể cao hơn chút)
+    // Helper method để tạo "thẻ" dashboard (đã bỏ phần icon)
+    private JPanel createDashboardCard(String title, String actionCommand) {
+        JPanel card = new JPanel(new BorderLayout(10, 10)); // Giảm khoảng cách nếu không có icon
+        card.setBackground(Color.WHITE); // Nền trắng cho card để nổi bật trên nền tối
+        card.setPreferredSize(new Dimension(280, 120)); // Kích thước card (có thể điều chỉnh)
         card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(UIConstants.COLOR_BORDER_DARK, 1),
-                new EmptyBorder(25, 25, 25, 25) // Tăng padding bên trong card
+                BorderFactory.createLineBorder(UIConstants.COLOR_BORDER_DARK, 1), // Viền mỏng
+                new EmptyBorder(20, 20, 20, 20)
         ));
-        card.putClientProperty("FlatLaf.style", "arc: 10");
+        // Thử nghiệm với bo góc của FlatLaf nếu bạn đang dùng
+        // card.putClientProperty("FlatLaf.style", "arc: 10");
 
-        // Icon (nếu có)
-        if (iconResourcePath != null && !iconResourcePath.isEmpty()) {
-            try {
-                java.net.URL iconURL = getClass().getResource(iconResourcePath);
-                if (iconURL != null) {
-                    ImageIcon icon = new ImageIcon(iconURL);
-                    // Resize icon nếu muốn kích thước đồng nhất, ví dụ 64x64
-                    Image img = icon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
-                    JLabel iconLabel = new JLabel(new ImageIcon(img));
-                    iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                    iconLabel.setBorder(new EmptyBorder(0,0,10,0)); // Khoảng cách dưới icon
-                    card.add(iconLabel, BorderLayout.NORTH); // Đặt icon ở trên
-                } else {
-                    System.err.println("UserDashboardPanel: Không tìm thấy resource icon: " + iconResourcePath);
-                }
-            } catch (Exception e) {
-                System.err.println("UserDashboardPanel: Lỗi khi tải icon: " + iconResourcePath + " - " + e.getMessage());
-            }
-        }
-
-        JLabel titleLabel = new JLabel("<html><div style='text-align: center;'>" + title.replace("<br>", "<br/>") + "</div></html>", SwingConstants.CENTER);
-        titleLabel.setFont(UIConstants.FONT_TITLE_MEDIUM.deriveFont(18f)); // Font to hơn chút cho user card
-        titleLabel.setForeground(UIConstants.COLOR_TEXT_LIGHT);
-        card.add(titleLabel, BorderLayout.CENTER); // Text ở giữa (dưới icon)
+        JLabel titleLabel = new JLabel("<html><div style='text-align: center;'>" + title + "</div></html>", SwingConstants.CENTER);
+        titleLabel.setFont(UIConstants.FONT_TITLE_MEDIUM.deriveFont(18f));
+        titleLabel.setForeground(UIConstants.COLOR_TEXT_DARK); // Chữ tối trên nền card trắng
+        card.add(titleLabel, BorderLayout.CENTER);
 
         card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         card.addMouseListener(new MouseAdapter() {
-            final Color originalBg = UIConstants.COLOR_COMPONENT_BACKGROUND_DARK;
-            final Color hoverBg = UIConstants.COLOR_ACCENT_BLUE.darker();
+            final Color originalBg = Color.WHITE; // Nền gốc của card
+            final Color hoverBg = new Color(230, 245, 255); // Màu hover nhạt (ví dụ)
 
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -142,20 +112,19 @@ public class UserDashboardPanel extends JPanel {
             welcomeLabel.setText("Chào mừng, " + currentUserData.getName() + "!");
         } else {
             welcomeLabel.setText("Chào mừng!");
+            // Cân nhắc xử lý trường hợp session không hợp lệ, ví dụ logout
             if (mainFrame != null && (!session.isLoggedIn() || session.getCurrentAccount() == null)) {
                  mainFrame.performLogout();
             }
         }
     }
 
-    private void loadChart() {
-        // Hiện tại chưa có biểu đồ ở đây
-        // System.out.println("Chức năng biểu đồ cho UserDashboardPanel đang được phát triển.");
-    }
+    // loadChart() không còn cần thiết nếu không có biểu đồ
+    // private void loadChart() { }
 
     public void panelVisible() {
         loadUserData();
-        loadChart();
+        // loadChart(); // Bỏ gọi loadChart
         System.out.println("UserDashboardPanel is now visible.");
     }
 }

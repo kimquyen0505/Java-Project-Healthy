@@ -1,4 +1,3 @@
-// package com.kimquyen.healthapp.ui;
 package com.kimquyen.healthapp.ui;
 
 import com.kimquyen.healthapp.model.Role;
@@ -105,26 +104,7 @@ public class AdminDashboardPanel extends JPanel {
         // Bo tròn góc (nếu FlatLaf được sử dụng và hỗ trợ)
         card.putClientProperty("FlatLaf.style", "arc: 10"); // Giá trị arc điều chỉnh độ bo tròn
 
-        // Icon (nếu có)
-        if (iconResourcePath != null && !iconResourcePath.isEmpty()) {
-            try {
-                java.net.URL iconURL = getClass().getResource(iconResourcePath);
-                if (iconURL != null) {
-                    ImageIcon icon = new ImageIcon(iconURL);
-                    // Resize icon nếu muốn kích thước đồng nhất, ví dụ 48x48
-                    Image img = icon.getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH);
-                    JLabel iconLabel = new JLabel(new ImageIcon(img));
-                    iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                    // Đặt icon ở trên text
-                    card.add(iconLabel, BorderLayout.NORTH);
-                } else {
-                    System.err.println("AdminDashboardPanel: Không tìm thấy resource icon: " + iconResourcePath);
-                }
-            } catch (Exception e) {
-                System.err.println("AdminDashboardPanel: Lỗi khi tải icon: " + iconResourcePath + " - " + e.getMessage());
-            }
-        }
-
+       
         JLabel titleLabel = new JLabel("<html><div style='text-align: center;'>" + title.replace("<br>", "<br/>") + "</div></html>", SwingConstants.CENTER);
         titleLabel.setFont(UIConstants.FONT_TITLE_MEDIUM.deriveFont(17f)); // Điều chỉnh font
         titleLabel.setForeground(UIConstants.COLOR_TEXT_LIGHT);

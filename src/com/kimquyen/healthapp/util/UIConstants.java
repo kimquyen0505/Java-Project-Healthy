@@ -43,6 +43,7 @@ public class UIConstants {
     public static final Insets INSETS_FORM_FIELD = new Insets(8, 8, 8, 8);       // Khoảng cách giữa các trường trong form
     public static final Insets INSETS_SIDEBAR_BUTTON = new Insets(10, 15, 10, 15); // // Padding cho nút trên sidebar
     public static final Insets INSETS_TEXT_COMPONENT = new Insets(3, 6, 3, 6);    // Padding bên trong JTextField, JTextArea
+	public static final Color COLOR_TEXT_DARK = null;
 
     // Icons (Ví dụ - bạn cần có file icon thực tế)
     // Đặt icon trong thư mục src/resources/icons (ví dụ)
