@@ -4,9 +4,9 @@ import java.sql.Timestamp;
 
 public class HraResponse {
     private int id;
-    private int userId; // Tham chiếu đến UserData.id
+    private int userId; 
     private int questionId; 
-    private String response; // Câu trả lời của người dùng
+    private String response; 
     private Timestamp createdAt;
 
     public HraResponse() {

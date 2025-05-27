@@ -16,7 +16,6 @@ import com.kimquyen.healthapp.service.SponsorService;
 import com.kimquyen.healthapp.service.UserService;
 
 import javax.swing.UIManager;
-// import javax.swing.UIManager.LookAndFeelInfo; // Bạn không dùng vòng lặp nữa nên có thể bỏ
 import com.kimquyen.healthapp.ui.LoginFrame;
 import javax.swing.SwingUtilities;
 
@@ -40,17 +39,13 @@ public class MainApp {
     public static void main(String[] args) {
         // 1. Thiết lập Look and Feel (nên làm đầu tiên)
         try {
-            // Bạn có thể chọn một trong các L&F của FlatLaf
-            // UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
-            // UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
-            // UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatIntelliJLaf());
+           
             UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarculaLaf());
             System.out.println("FlatLaf Darcula Look and Feel được áp dụng thành công.");
         } catch (Exception ex) {
-            // Nếu FlatLaf không khởi tạo được (ví dụ thiếu JAR),
-            // ứng dụng sẽ dùng L&F mặc định của hệ thống.
+  
             System.err.println("Không thể khởi tạo FlatLaf, sử dụng L&F mặc định: " + ex.getMessage());
-            // Không cần thiết lập lại Nimbus ở đây nữa nếu ưu tiên FlatLaf.
+
         }
 
         // 2. Khởi tạo DAOs

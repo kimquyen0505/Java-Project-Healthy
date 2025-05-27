@@ -36,11 +36,11 @@ public class ViewHistoryPanel extends JPanel {
     }
 
     private void initComponents() {
-        JLabel titleLabel = new JLabel("Lịch Sử Các Bài Đánh Giá", JLabel.CENTER);
+        JLabel titleLabel = new JLabel("View Assessment History", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         add(titleLabel, BorderLayout.NORTH);
 
-        String[] columnNames = {"Ngày Đánh Giá", "Tổng Điểm", "Mức Độ Rủi Ro"};
+        String[] columnNames = {"Evaluation Date", "Total Score", "Risk level"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -71,11 +71,11 @@ public class ViewHistoryPanel extends JPanel {
         // Panel nút
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-        viewDetailsButton = new JButton("Xem Chi Tiết");
+        viewDetailsButton = new JButton("View Details");
         viewDetailsButton.setFont(new Font("Arial", Font.PLAIN, 14));
         viewDetailsButton.addActionListener(e -> viewSelectedAssessmentDetails());
 
-        backButton = new JButton("Quay Lại Dashboard");
+        backButton = new JButton("Return Dashboard");
         backButton.setFont(new Font("Arial", Font.PLAIN, 14));
         backButton.addActionListener(e -> {
             if (mainFrame != null) {
@@ -95,7 +95,7 @@ public class ViewHistoryPanel extends JPanel {
         tableModel.setRowCount(0); // Xóa dữ liệu cũ
         SessionManager session = SessionManager.getInstance();
         if (!session.isLoggedIn() || session.getCurrentUserData() == null) {
-            JOptionPane.showMessageDialog(this, "Vui lòng đăng nhập để xem lịch sử.", "Chưa Đăng Nhập", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please log in to view history.", "Not logged in", JOptionPane.WARNING_MESSAGE);
             if (mainFrame != null) mainFrame.performLogout();
             return;
         }
@@ -114,25 +114,24 @@ public class ViewHistoryPanel extends JPanel {
             }
         } else {
 
-            System.out.println("Không có lịch sử đánh giá nào cho người dùng: " + currentUser.getName());
+            System.out.println("No evaluation history for the user: " + currentUser.getName());
         }
     }
 
     private void viewSelectedAssessmentDetails() {
         int selectedRowView = historyTable.getSelectedRow();
         if (selectedRowView == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một bài đánh giá từ danh sách để xem chi tiết.", "Chưa Chọn", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select an evaluation from the list to view details", "Not Select", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         int selectedRowModel = historyTable.convertRowIndexToModel(selectedRowView);
 
-        JOptionPane.showMessageDialog(this, "Chức năng 'Xem Chi Tiết' đang được phát triển.\nBạn cần một cách để lấy ID của lần làm bài đã chọn.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "'View Details' feature is under development.\n"
+        		+ "You need a way to get the ID of the selected attempt.", "Notification", JOptionPane.INFORMATION_MESSAGE);
     }
 
 
-    /**
-     * Phương thức này sẽ được gọi bởi MainFrame khi panel này được hiển thị.
-     */
+   
     public void panelVisible() {
         loadHistoryData();
         System.out.println("ViewHistoryPanel is now visible.");

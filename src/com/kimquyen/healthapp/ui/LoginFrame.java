@@ -30,7 +30,7 @@ public class LoginFrame extends JFrame {
         this.authService = authService;
         this.userDataDAO = userDataDAO;
 
-        setTitle("Đăng nhập - Health Response App");
+        setTitle("Log In - Health Response App");
         setSize(400, 250);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -47,7 +47,7 @@ public class LoginFrame extends JFrame {
 
         // Username
         // Tiêu đề (Mới)
-        JLabel titleLabel = new JLabel("Đăng Nhập Health App", JLabel.CENTER);
+        JLabel titleLabel = new JLabel("Log In Health App", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Hoặc UIConstants.FONT_TITLE
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2; gbc.insets = new Insets(0, 0, 20, 0); // Khoảng cách dưới tiêu đề
         add(titleLabel, gbc);
@@ -57,20 +57,20 @@ public class LoginFrame extends JFrame {
 
         // Username
         gbc.gridx = 0; gbc.gridy = 1; // Điều chỉnh gridy
-        add(new JLabel("Tên đăng nhập:"), gbc);
+        add(new JLabel("Name:"), gbc);
         usernameField = new JTextField(20);
         gbc.gridx = 1; gbc.gridy = 1;
         add(usernameField, gbc);
 
         // Password
         gbc.gridx = 0; gbc.gridy = 2; // Điều chỉnh gridy
-        add(new JLabel("Mật khẩu:"), gbc);
+        add(new JLabel("Password:"), gbc);
         passwordField = new JPasswordField(20);
         gbc.gridx = 1; gbc.gridy = 2;
         add(passwordField, gbc);
 
         // Login Button
-        loginButton = new JButton("Đăng nhập");
+        loginButton = new JButton("Log In");
         loginButton.setFont(new Font("Arial", Font.BOLD, 14)); // Hoặc UIConstants.FONT_BUTTON
         loginButton.setPreferredSize(new Dimension(120, 35)); // Hoặc UIConstants.DIM_BUTTON_STANDARD
         gbc.gridx = 0; gbc.gridy = 3; // Điều chỉnh gridy
@@ -96,12 +96,12 @@ public class LoginFrame extends JFrame {
 
         // Sử dụng ValidationUtil
         if (ValidationUtil.isNullOrEmpty(username)) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên đăng nhập.", "Lỗi Đăng Nhập", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please enter your username.", "Login Error", JOptionPane.WARNING_MESSAGE);
             usernameField.requestFocus();
             return;
         }
         if (ValidationUtil.isNullOrEmpty(password)) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu.", "Lỗi Đăng Nhập", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please enter your password.", "login Error", JOptionPane.WARNING_MESSAGE);
             passwordField.requestFocus();
             return;
         }
@@ -116,7 +116,7 @@ public class LoginFrame extends JFrame {
 
             if (loggedInUserData != null) {
                 SessionManager.getInstance().login(loggedInAccount, loggedInUserData);
-                JOptionPane.showMessageDialog(this, "Đăng nhập thành công! Chào mừng " + loggedInUserData.getName() + ".", "Đăng Nhập Thành Công", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Login successful! Welcome " + loggedInUserData.getName() + ".", "Login successful", JOptionPane.INFORMATION_MESSAGE);
 
                 MainFrame mainFrame = new MainFrame(
                     MainApp.authService,
@@ -131,11 +131,11 @@ public class LoginFrame extends JFrame {
                 this.dispose();
 
             } else {
-                JOptionPane.showMessageDialog(this, "Đăng nhập thành công với tài khoản '" + loggedInAccount.getUsername() + "',\nnhưng không tìm thấy thông tin người dùng (UserData) liên kết (ID: " + loggedInAccount.getUserId() + ").\nVui lòng liên hệ quản trị viên.", "Lỗi Dữ Liệu Người Dùng", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Login successful with the account '" + loggedInAccount.getUsername() + "',\nbut user information (UserData) linked with (ID:  " + loggedInAccount.getUserId() + ").\n  was not found.", "User Data Error", JOptionPane.ERROR_MESSAGE);
                 SessionManager.getInstance().logout();
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.", "Đăng Nhập Thất Bại", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "The username or password is incorrect. Please try again.", "Login Failed", JOptionPane.ERROR_MESSAGE);
             passwordField.setText("");
             passwordField.requestFocus();
         }

@@ -43,12 +43,12 @@ public class ManageUsersPanel extends JPanel {
     private void initComponents() {
         // --- Panel Tiêu đề và Tìm kiếm ---
         JPanel topPanel = new JPanel(new BorderLayout(10, 5));
-        JLabel titleLabel = new JLabel("Quản Lý Người Dùng", JLabel.CENTER);
+        JLabel titleLabel = new JLabel("User Management", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         topPanel.add(titleLabel, BorderLayout.NORTH);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.add(new JLabel("Tìm kiếm (Tên hoặc Username):"));
+        searchPanel.add(new JLabel("Search (Name):"));
         searchField = new JTextField(30);
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) { filterTable(); }
@@ -60,7 +60,7 @@ public class ManageUsersPanel extends JPanel {
         add(topPanel, BorderLayout.NORTH);
 
         // --- Table Model và JTable ---
-        String[] columnNames = {"User ID", "Tên Đầy Đủ", "Username", "Vai trò", "Sponsor ID", "Ngày Tạo"};
+        String[] columnNames = {"User ID", "Full Name", "Username", "Role", "Sponsor ID", "Creation Date"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -93,31 +93,31 @@ public class ManageUsersPanel extends JPanel {
         Font buttonFont = new Font("Arial", Font.PLAIN, 14);
         Dimension buttonDim = new Dimension(150, 35);
 
-        addButton = new JButton("Thêm Mới");
+        addButton = new JButton("ADD");
         addButton.setFont(buttonFont);
         addButton.setIcon(UIManager.getIcon("FileChooser.newFolderIcon"));
         addButton.setPreferredSize(buttonDim);
         addButton.addActionListener(e -> openAddEditUserDialog(null, null)); // null để thêm mới
 
-        editButton = new JButton("Sửa");
+        editButton = new JButton("EDIT");
         editButton.setFont(buttonFont);
         editButton.setIcon(UIManager.getIcon("Actions.Redo")); // Ví dụ icon
         editButton.setPreferredSize(buttonDim);
         editButton.addActionListener(e -> openEditUserDialog());
 
-        deleteButton = new JButton("Xóa");
+        deleteButton = new JButton("DELETE");
         deleteButton.setFont(buttonFont);
         deleteButton.setIcon(UIManager.getIcon("FileChooser.deleteIcon"));
         deleteButton.setPreferredSize(buttonDim);
         deleteButton.addActionListener(e -> deleteSelectedUser());
 
-        refreshButton = new JButton("Làm Mới DS");
+        refreshButton = new JButton("Refresh");
         refreshButton.setFont(buttonFont);
         refreshButton.setIcon(UIManager.getIcon("FileChooser.refreshAction"));// Sai icon, cần tìm icon đúng hoặc bỏ
         refreshButton.setPreferredSize(buttonDim);
         refreshButton.addActionListener(e -> loadUsersData());
 
-        backButton = new JButton("Quay Lại Dashboard");
+        backButton = new JButton("Return Dashboard");
         backButton.setFont(buttonFont);
         backButton.setPreferredSize(new Dimension(180, 35));
         backButton.addActionListener(e -> {
@@ -146,7 +146,7 @@ public class ManageUsersPanel extends JPanel {
                 // "(?i)" để không phân biệt chữ hoa/thường
                 sorter.setRowFilter(RowFilter.regexFilter("(?i)" + Pattern.quote(text), 1, 2));
             } catch (PatternSyntaxException pse) {
-                System.err.println("Lỗi cú pháp Regex khi tìm kiếm: " + pse.getMessage());
+                System.err.println("Regex syntax error during search: " + pse.getMessage());
             }
         }
     }
@@ -154,7 +154,7 @@ public class ManageUsersPanel extends JPanel {
     public void loadUsersData() {
         tableModel.setRowCount(0); // Xóa dữ liệu cũ
         if (userService == null) {
-            JOptionPane.showMessageDialog(this, "Lỗi: Service quản lý người dùng chưa sẵn sàng.", "Lỗi Service", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error: User management service is not ready.", "Service Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -195,7 +195,7 @@ public class ManageUsersPanel extends JPanel {
     private void openEditUserDialog() {
         int selectedRowView = usersTable.getSelectedRow();
         if (selectedRowView == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một người dùng để sửa.", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a user to edit.", "Notification", JOptionPane.WARNING_MESSAGE);
             return;
         }
         int selectedRowModel = usersTable.convertRowIndexToModel(selectedRowView);
@@ -206,37 +206,37 @@ public class ManageUsersPanel extends JPanel {
             userId = (int) tableModel.getValueAt(selectedRowModel, 0);       // Cột "User ID"
             username = (String) tableModel.getValueAt(selectedRowModel, 2);  // Cột "Username"
         } catch (Exception e) {
-            System.err.println("Lỗi khi lấy userId/username từ tableModel trong openEditUserDialog: " + e.getMessage());
-            JOptionPane.showMessageDialog(this, "Lỗi khi đọc dữ liệu từ dòng đã chọn trong bảng.", "Lỗi Bảng", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Error retrieving userId/username from tableModel in openEditUserDialog.: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error reading data from the selected row in the table.", "error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        System.out.println("ManageUsersPanel - SỬA - Lấy từ bảng -> UserID: " + userId + ", Username: [" + username + "]");
+        System.out.println("ManageUsersPanel - EDIT - Get from table -> UserID: " + userId + ", Username: [" + username + "]");
 
         if (userId == 0 || username == null || username.trim().isEmpty()) {
-             JOptionPane.showMessageDialog(this, "Thông tin UserID hoặc Username từ bảng không hợp lệ.", "Lỗi Dữ Liệu Bảng", JOptionPane.ERROR_MESSAGE);
+             JOptionPane.showMessageDialog(this, "UserID or Username information from the table is invalid.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        System.out.println("ManageUsersPanel - SỬA - Gọi userService.getUserDataById(" + userId + ")");
+        System.out.println("ManageUsersPanel - EDIT - userService.getUserDataById(" + userId + ")");
         UserData userDataToEdit = userService.getUserDataById(userId);
-        System.out.println("ManageUsersPanel - SỬA - UserData từ service: " + (userDataToEdit != null ? "TÌM THẤY (Name: " + userDataToEdit.getName() + ")" : "NULL"));
+        System.out.println("ManageUsersPanel - EDIT - UserData from service: " + (userDataToEdit != null ? "Found (Name: " + userDataToEdit.getName() + ")" : "NULL"));
 
-        System.out.println("ManageUsersPanel - SỬA - Gọi userService.getAccountByUsername('" + username + "')");
+        System.out.println("ManageUsersPanel - EDIT -  userService.getAccountByUsername('" + username + "')");
         Account accountToEdit = userService.getAccountByUsername(username);
-        System.out.println("ManageUsersPanel - SỬA - Account từ service: " + (accountToEdit != null ? "TÌM THẤY (Username: " + accountToEdit.getUsername() + ")" : "NULL"));
+        System.out.println("ManageUsersPanel - EDIT - Account from service: " + (accountToEdit != null ? "Found (Username: " + accountToEdit.getUsername() + ")" : "NULL"));
 
         if (userDataToEdit != null && accountToEdit != null) {
             openAddEditUserDialog(userDataToEdit, accountToEdit);
         } else {
-            StringBuilder errorMessage = new StringBuilder("Không thể tải thông tin người dùng để sửa:");
+            StringBuilder errorMessage = new StringBuilder("Unable to load user information for editing:");
             if (userDataToEdit == null) {
-                errorMessage.append("\n - UserData không tìm thấy cho ID: ").append(userId);
+                errorMessage.append("\n - UserData not found ID: ").append(userId);
             }
             if (accountToEdit == null) {
-                errorMessage.append("\n - Account không tìm thấy cho Username: ").append(username);
+                errorMessage.append("\n - Account not found Username: ").append(username);
             }
-            JOptionPane.showMessageDialog(this, errorMessage.toString(), "Lỗi Tải Dữ Liệu", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, errorMessage.toString(), "data error", JOptionPane.ERROR_MESSAGE);
             // loadUsersData(); // Có thể không cần load lại nếu chỉ là lỗi tải cho dialog sửa
         }
     }
@@ -244,7 +244,7 @@ public class ManageUsersPanel extends JPanel {
     private void deleteSelectedUser() {
         int selectedRowView = usersTable.getSelectedRow();
         if (selectedRowView == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một người dùng để xóa.", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a user to delete.", "Notification", JOptionPane.WARNING_MESSAGE);
             return;
         }
         int selectedRowModel = usersTable.convertRowIndexToModel(selectedRowView);
@@ -256,23 +256,23 @@ public class ManageUsersPanel extends JPanel {
         SessionManager session = SessionManager.getInstance();
         if (session.isLoggedIn() && session.getCurrentAccount() != null &&
             session.getCurrentAccount().getUsername().equals(username)) {
-            JOptionPane.showMessageDialog(this, "Bạn không thể xóa chính tài khoản đang đăng nhập.", "Hành động bị chặn", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "You cannot delete the account that is currently logged in.", "Action blocked", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         int confirm = JOptionPane.showConfirmDialog(this,
-                "Bạn có chắc chắn muốn xóa người dùng:\nTên: " + name + "\nUsername: " + username + "\n(ID UserData: " + userId + ") ?",
-                "Xác Nhận Xóa", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                "Are you sure you want to delete the user:\nName: " + name + "\nUsername: " + username + "\n(ID UserData: " + userId + ") ?",
+                "Confirm Deletion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
             // Đảm bảo deleteUser trong UserService xử lý xóa cả Account và UserData
             // và có thể cả các dữ liệu liên quan (ví dụ: hra_responses) hoặc có ràng buộc khóa ngoại phù hợp
             boolean success = userService.deleteUser(userId, username);
             if (success) {
-                JOptionPane.showMessageDialog(this, "Đã xóa người dùng thành công.", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "User deleted successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 loadUsersData();
             } else {
-                JOptionPane.showMessageDialog(this, "Xóa người dùng thất bại.\nNgười dùng này có thể có các dữ liệu liên quan không thể xóa.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Failed to delete user.\nThis user may have related data that cannot be deleted.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

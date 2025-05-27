@@ -55,7 +55,7 @@ public class TakeAssessmentPanel extends JPanel {
 
     private void initComponents() {
         questionsDisplayPanel = new JPanel(new BorderLayout(15, 15));
-        questionLabel = new JLabel("Đang tải câu hỏi...", JLabel.CENTER);
+        questionLabel = new JLabel("Loading questions...", JLabel.CENTER);
         questionLabel.setFont(new Font("Arial", Font.BOLD, 20));
         questionLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
         questionsDisplayPanel.add(questionLabel, BorderLayout.NORTH);
@@ -73,17 +73,17 @@ public class TakeAssessmentPanel extends JPanel {
         Dimension navButtonSize = new Dimension(150, 40);
         Font navButtonFont = new Font("Arial", Font.PLAIN, 14);
 
-        prevButton = new JButton("<< Câu Trước");
+        prevButton = new JButton("<< Previous Question");
         prevButton.setPreferredSize(navButtonSize);
         prevButton.setFont(navButtonFont);
         prevButton.addActionListener(e -> showPreviousQuestion());
 
-        nextButton = new JButton("Câu Tiếp >>");
+        nextButton = new JButton("Next Question >>");
         nextButton.setPreferredSize(navButtonSize);
         nextButton.setFont(navButtonFont);
         nextButton.addActionListener(e -> showNextQuestion());
 
-        submitButton = new JButton("Nộp Bài");
+        submitButton = new JButton("Exam Questions");
         submitButton.setPreferredSize(new Dimension(180, 45));
         submitButton.setFont(new Font("Arial", Font.BOLD, 16));
         submitButton.setBackground(new Color(34, 139, 34));
@@ -110,7 +110,7 @@ public class TakeAssessmentPanel extends JPanel {
         if (questions != null && !questions.isEmpty()) {
             displayCurrentQuestion();
         } else {
-            questionLabel.setText("Không có câu hỏi nào để hiển thị hoặc có lỗi khi tải câu hỏi.");
+            questionLabel.setText("No questions to display or an error occurred while loading questions.");
             if (answerOptionsPanelContainer != null && answerOptionsPanelContainer.getComponentCount() > 0) {
                  answerOptionsPanelContainer.removeAll();
                  answerOptionsPanelContainer.revalidate();
@@ -130,7 +130,7 @@ public class TakeAssessmentPanel extends JPanel {
         }
         HraQuestion currentQuestion = questions.get(currentQuestionIndex);
         questionLabel.setText("<html><body style='width: 650px; padding: 10px;'>" +
-                              "<b>Câu " + (currentQuestionIndex + 1) + "/" + questions.size() + ":</b> " +
+                              "<b>Question " + (currentQuestionIndex + 1) + "/" + questions.size() + ":</b> " +
                               (currentQuestion.getTitle() != null && !currentQuestion.getTitle().isEmpty() ? "<i>(" + currentQuestion.getTitle() + ")</i><br>" : "") +
                               currentQuestion.getText() + "</body></html>");
 
@@ -160,7 +160,7 @@ public class TakeAssessmentPanel extends JPanel {
             } else if (HraQuestion.TYPE_TEXT_INPUT.equalsIgnoreCase(questionType)) {
                 renderTextInput(currentAnswerOptionsPanel, currentQuestion);
             } else {
-                currentAnswerOptionsPanel.add(new JLabel("Loại câu hỏi không được hỗ trợ: " + (questionType != null ? questionType : "N/A")));
+                currentAnswerOptionsPanel.add(new JLabel("Question type not supported: " + (questionType != null ? questionType : "N/A")));
             }
         } catch (Exception e) { // Bắt Exception chung
              handleGenericError(currentAnswerOptionsPanel, currentQuestion, e);
@@ -197,7 +197,7 @@ public class TakeAssessmentPanel extends JPanel {
                 panel.add(Box.createRigidArea(new Dimension(0, 8)));
             }
         } else {
-             panel.add(new JLabel("Không có lựa chọn nào được định nghĩa cho câu hỏi này."));
+             panel.add(new JLabel("No options defined for this question."));
         }
     }
 
@@ -228,13 +228,13 @@ public class TakeAssessmentPanel extends JPanel {
                 panel.add(Box.createRigidArea(new Dimension(0, 8)));
             }
         } else {
-            panel.add(new JLabel("Không có lựa chọn nào được định nghĩa cho câu hỏi này."));
+            panel.add(new JLabel("No options defined for this question."));
         }
     }
 
     private void renderTextInput(JPanel panel, HraQuestion question) {
         panel.setLayout(new BorderLayout(5,5));
-        JLabel answerLabel = new JLabel("Trả lời của bạn:");
+        JLabel answerLabel = new JLabel("Your answer:");
         answerLabel.setFont(new Font("Arial", Font.ITALIC, 14));
         panel.add(answerLabel, BorderLayout.NORTH);
 
@@ -264,8 +264,8 @@ public class TakeAssessmentPanel extends JPanel {
     private void handleGenericError(JPanel panel, HraQuestion question, Exception e) {
         panel.removeAll();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        panel.add(new JLabel("<html><body style='width: 500px;'>Lỗi không xác định khi hiển thị lựa chọn cho câu hỏi này.</body></html>"));
-        System.err.println("Lỗi không xác định khi hiển thị câu hỏi ID " + (question != null ? question.getQuestionId() : "UNKNOWN"));
+        panel.add(new JLabel("<html><body style='width: 500px;'>Unknown error occurred while displaying options for this question.</body></html>"));
+        System.err.println("Unknown error occurred while displaying question ID " + (question != null ? question.getQuestionId() : "UNKNOWN"));
         e.printStackTrace();
         panel.revalidate();
         panel.repaint();
@@ -342,7 +342,7 @@ public class TakeAssessmentPanel extends JPanel {
         saveCurrentAnswer(); // Đảm bảo câu trả lời cuối cùng được lưu
         UserData currentUser = SessionManager.getInstance().getCurrentUserData();
         if (currentUser == null) {
-            JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.", "Lỗi Session", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "User information not found. Please log in again.", " Session ERROR", JOptionPane.ERROR_MESSAGE);
             if (mainFrame != null) mainFrame.performLogout();
             return;
         }
@@ -353,15 +353,15 @@ public class TakeAssessmentPanel extends JPanel {
                 responsesToSubmit.put(q, userResponses.getOrDefault(q.getQuestionId(), ""));
             }
         } else { // Không có câu hỏi nào được tải
-             JOptionPane.showMessageDialog(this, "Không có câu hỏi nào để nộp.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+             JOptionPane.showMessageDialog(this, "No questions to submit.", "Notification", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
 
         if (responsesToSubmit.isEmpty() && !questions.isEmpty()) { // Có câu hỏi nhưng chưa trả lời câu nào
              int confirm = JOptionPane.showConfirmDialog(this,
-                    "Bạn chưa trả lời câu hỏi nào. Bạn có muốn nộp bài không?",
-                    "Xác Nhận Nộp Bài", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    "You haven't answered any questions. Do you want to submit the test?",
+                    "Confirm Submit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (confirm == JOptionPane.NO_OPTION) {
                 return;
             }
@@ -371,9 +371,9 @@ public class TakeAssessmentPanel extends JPanel {
 
         if (assessmentResult != null) {
             JOptionPane.showMessageDialog(this,
-                    "Nộp bài đánh giá thành công!\nĐiểm của bạn: " + assessmentResult.getTotalScore() +
-                    "\nMức độ rủi ro: " + assessmentResult.getRiskLevel(),
-                    "Hoàn Tất Đánh Giá", JOptionPane.INFORMATION_MESSAGE);
+                    "Evaluation submitted successfully!\nYour score: " + assessmentResult.getTotalScore() +
+                    "\nRisk level: " + assessmentResult.getRiskLevel(),
+                    "Complete Evaluation", JOptionPane.INFORMATION_MESSAGE);
 
             if (mainFrame != null) {
                 // Cân nhắc hiển thị AssessmentResultPanel nếu bạn đã tạo
@@ -382,8 +382,8 @@ public class TakeAssessmentPanel extends JPanel {
             }
         } else {
             JOptionPane.showMessageDialog(this,
-                    "Có lỗi xảy ra khi nộp bài đánh giá. Vui lòng thử lại hoặc liên hệ quản trị viên.",
-                    "Lỗi Nộp Bài", JOptionPane.ERROR_MESSAGE);
+                    "An error occurred while submitting the evaluation. Please try again or contact the administrator.",
+                    "Submission Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

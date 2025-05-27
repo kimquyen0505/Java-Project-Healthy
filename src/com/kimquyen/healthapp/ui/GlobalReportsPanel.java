@@ -66,7 +66,7 @@ public class GlobalReportsPanel extends JPanel {
     }
 
     private void initComponents() {
-        JLabel titleLabel = new JLabel("Báo Cáo Tổng Thể", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("View Overall Report", SwingConstants.CENTER);
         titleLabel.setFont(UIConstants.FONT_TITLE_LARGE.deriveFont(22f));
         titleLabel.setForeground(UIConstants.COLOR_TEXT_DARK);
         add(titleLabel, BorderLayout.NORTH);
@@ -80,7 +80,7 @@ public class GlobalReportsPanel extends JPanel {
         scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
 
-        JButton backButton = new JButton("Quay Lại Dashboard");
+        JButton backButton = new JButton("Return Dashboard");
         backButton.setFont(UIConstants.FONT_PRIMARY_BOLD);
         backButton.setBackground(UIConstants.COLOR_ACCENT_BLUE);
         backButton.setForeground(Color.WHITE);
@@ -111,9 +111,9 @@ public class GlobalReportsPanel extends JPanel {
         DefaultPieDataset riskLevelDataset = createRiskLevelDataset();
         if (riskLevelDataset != null && riskLevelDataset.getItemCount() > 0) {
             JFreeChart riskLevelChart = ChartFactory.createPieChart(
-                    "Phân Phối Mức Độ Rủi Ro", riskLevelDataset, true, true, false);
+                    "Distribution of Risk Levels", riskLevelDataset, true, true, false);
             configurePiePlot((PiePlot) riskLevelChart.getPlot());
-            ChartPanel riskChartPanel = createStyledChartPanel(riskLevelChart, "Mức Độ Rủi Ro");
+            ChartPanel riskChartPanel = createStyledChartPanel(riskLevelChart, "Risk Level");
             chartsContainerPanel.add(riskChartPanel);
         } else {
             chartsContainerPanel.add(createNoDataPanel("Không có dữ liệu đánh giá mức độ rủi ro.", "Mức Độ Rủi Ro"));
@@ -126,7 +126,7 @@ public class GlobalReportsPanel extends JPanel {
             String chartTitle = getChartTitleForQuestionDistribution(questionIdForDist);
             JFreeChart responseDistChart = ChartFactory.createPieChart(chartTitle, responseDistDataset, true, true, false);
             configurePiePlot((PiePlot) responseDistChart.getPlot());
-            ChartPanel responseDistChartPanel = createStyledChartPanel(responseDistChart, "Phân Tích Câu Trả Lời (Câu ID " + questionIdForDist + ")");
+            ChartPanel responseDistChartPanel = createStyledChartPanel(responseDistChart, "Answer Analysis (Question ID " + questionIdForDist + ")");
             chartsContainerPanel.add(responseDistChartPanel);
         } else {
             chartsContainerPanel.add(createNoDataPanel("Không có dữ liệu trả lời cho câu hỏi ID: " + questionIdForDist + ".", "Phân Tích Câu Trả Lời (Câu ID " + questionIdForDist + ")"));
@@ -136,10 +136,10 @@ public class GlobalReportsPanel extends JPanel {
         DefaultCategoryDataset userBySponsorDataset = createUserBySponsorDataset();
         if (userBySponsorDataset != null && userBySponsorDataset.getColumnCount() > 0) {
             JFreeChart userBySponsorChart = ChartFactory.createBarChart(
-                    "Người Dùng Theo Nhà Tài Trợ", "Nhà Tài Trợ", "Số Lượng Người Dùng",
+                    "Users by Sponsor", "Sponsor", "Number of Users",
                     userBySponsorDataset, PlotOrientation.VERTICAL, true, true, false);
             configureBarPlot((CategoryPlot) userBySponsorChart.getPlot());
-            ChartPanel userBySponsorChartPanel = createStyledChartPanel(userBySponsorChart, "Phân Bố Người Dùng Theo Nhà Tài Trợ");
+            ChartPanel userBySponsorChartPanel = createStyledChartPanel(userBySponsorChart, "User Distribution by Sponsor");
             chartsContainerPanel.add(userBySponsorChartPanel);
         } else {
             chartsContainerPanel.add(createNoDataPanel("Không có dữ liệu người dùng theo nhà tài trợ.", "Người Dùng Theo Nhà Tài Trợ"));
@@ -176,7 +176,7 @@ public class GlobalReportsPanel extends JPanel {
     private JPanel createStatsSummaryPanel() {
         JPanel statsSummaryPanel = new JPanel(new GridBagLayout());
         statsSummaryPanel.setPreferredSize(PREFERRED_CELL_SIZE);
-        stylePanel(statsSummaryPanel, "Thống Kê Chung");
+        stylePanel(statsSummaryPanel, "General Statistics");
         try {
             int totalUsers = 0;
             if (userService != null && userService.getAllUserData() != null) {
@@ -190,8 +190,8 @@ public class GlobalReportsPanel extends JPanel {
                      for(long count : assessmentCounts.values()){ totalAssessments += count; }
                 }
             }
-            addStatLabel(statsSummaryPanel, "Tổng số người dùng: " + totalUsers, 0);
-            addStatLabel(statsSummaryPanel, "Tổng số bài đánh giá sau ngày 1/1/2025: " + totalAssessments, 1);
+            addStatLabel(statsSummaryPanel, "Total Number of Users: " + totalUsers, 0);
+            addStatLabel(statsSummaryPanel, "Total Number of Reviews after January 1, 2025: " + totalAssessments, 1);
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridy = 2; gbc.weighty = 1.0; gbc.fill = GridBagConstraints.VERTICAL;

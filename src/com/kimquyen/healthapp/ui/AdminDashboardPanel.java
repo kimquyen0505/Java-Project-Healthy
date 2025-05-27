@@ -49,7 +49,7 @@ public class AdminDashboardPanel extends JPanel {
 
     private void initComponents() {
         // Welcome Label
-        welcomeAdminLabel = new JLabel("Bảng Điều Khiển Admin", JLabel.CENTER);
+        welcomeAdminLabel = new JLabel("Admin Dashbroad", JLabel.CENTER);
         welcomeAdminLabel.setFont(UIConstants.FONT_TITLE_LARGE);
         welcomeAdminLabel.setForeground(UIConstants.COLOR_TEXT_LIGHT);
         welcomeAdminLabel.setBorder(new EmptyBorder(10, 0, 25, 0)); // Padding trên/dưới
@@ -63,29 +63,29 @@ public class AdminDashboardPanel extends JPanel {
 
         // Thêm các thẻ chức năng
         dashboardCardsPanel.add(createDashboardCard(
-                "Quản Lý Người Dùng",
+                "User Management",
                 MainFrame.MANAGE_USERS_CARD,
                 "/icons/users_light.png" // Ví dụ: resources/icons/users_light.png
         ));
         dashboardCardsPanel.add(createDashboardCard(
-                "Quản Lý Câu Hỏi",
+                "Question Management",
                 MainFrame.MANAGE_QUESTIONS_CARD,
                 "/icons/questions_light.png"
         ));
         dashboardCardsPanel.add(createDashboardCard(
-                "Quản Lý Nhà Tài Trợ",
+                "Sponsor Management",
                 MainFrame.MANAGE_SPONSORS_CARD,
                 "/icons/sponsors_light.png"
         ));
         dashboardCardsPanel.add(createDashboardCard(
-                "Xem Báo Cáo Tổng Thể",
+                "View Overall Report",
                 MainFrame.GLOBAL_REPORTS_CARD,
                 "/icons/reports_light.png"
         ));
 
 
         // Panel cho thống kê
-        statsLabel = new JLabel("Đang tải thống kê...", JLabel.CENTER);
+        statsLabel = new JLabel("Loading statistics....", JLabel.CENTER);
         statsLabel.setFont(UIConstants.FONT_PRIMARY_REGULAR.deriveFont(16f));
         statsLabel.setForeground(UIConstants.COLOR_TEXT_SECONDARY_LIGHT);
         statsLabel.setBorder(new EmptyBorder(20, 0, 10, 0)); // Padding trên/dưới
@@ -144,14 +144,14 @@ public class AdminDashboardPanel extends JPanel {
                 // Nếu phương thức này có thể trả về null, cần kiểm tra null.
                 List<UserData> allUsers = userService.getAllUserData();
                 int totalUsers = (allUsers != null) ? allUsers.size() : 0;
-                statsLabel.setText("Tổng số người dùng: " + totalUsers);
+                statsLabel.setText("Total number of users:  " + totalUsers);
             } catch (Exception e) {
-                statsLabel.setText("Lỗi khi tải thống kê người dùng.");
-                System.err.println("AdminDashboardPanel: Lỗi khi tải thống kê admin: " + e.getMessage());
+                statsLabel.setText("Error loading user statistics.");
+                System.err.println("AdminDashboardPanel: Error loading admin statistics: " + e.getMessage());
                 e.printStackTrace(); // In stack trace để debug
             }
         } else {
-            statsLabel.setText("Không thể tải thống kê (UserService chưa sẵn sàng).");
+            statsLabel.setText("Unable to load statistics (UserService is not ready).");
             System.err.println("AdminDashboardPanel: userService là null.");
         }
     }
@@ -166,9 +166,9 @@ public class AdminDashboardPanel extends JPanel {
             } else if (session.getCurrentAccount().getUsername() != null) {
                 adminName = session.getCurrentAccount().getUsername();
             }
-            welcomeAdminLabel.setText("Chào mừng " + adminName + "!");
+            welcomeAdminLabel.setText("Welcome " + adminName + "!");
         } else {
-            welcomeAdminLabel.setText("Bảng Điều Khiển Admin");
+            welcomeAdminLabel.setText("Admin Dashboard");
             // Cân nhắc việc kiểm tra và có thể gọi mainFrame.performLogout() nếu session không hợp lệ
         }
         loadAdminStats();

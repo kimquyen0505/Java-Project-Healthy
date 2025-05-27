@@ -134,7 +134,7 @@ public class MainFrame extends JFrame {
         menuSpacing = Box.createRigidArea(new Dimension(0, 20));
         sidebarPanel.add(menuSpacing);
 
-        logoutButton = createSidebarButton("Đăng Xuất", ACTION_CMD_LOGOUT);
+        logoutButton = createSidebarButton("Log Out", ACTION_CMD_LOGOUT);
 
         add(sidebarPanel, BorderLayout.WEST);
 
@@ -299,14 +299,14 @@ public class MainFrame extends JFrame {
 
             if (currentUser.getRole() == Role.ADMIN) {
                 sidebarButtons.add(createSidebarButton("Dashboard Admin", ADMIN_DASHBOARD_CARD));
-                sidebarButtons.add(createSidebarButton("Quản Lý Người Dùng", MANAGE_USERS_CARD));
-                sidebarButtons.add(createSidebarButton("Quản Lý Câu Hỏi", MANAGE_QUESTIONS_CARD));
-                sidebarButtons.add(createSidebarButton("Quản Lý Nhà Tài Trợ", MANAGE_SPONSORS_CARD));
-                sidebarButtons.add(createSidebarButton("Báo Cáo Tổng Thể", GLOBAL_REPORTS_CARD));
+                sidebarButtons.add(createSidebarButton("User Management", MANAGE_USERS_CARD));
+                sidebarButtons.add(createSidebarButton("Question Management", MANAGE_QUESTIONS_CARD));
+                sidebarButtons.add(createSidebarButton("Sponsor Management", MANAGE_SPONSORS_CARD));
+                sidebarButtons.add(createSidebarButton("View Overall Report", GLOBAL_REPORTS_CARD));
             } else { // USER
                 sidebarButtons.add(createSidebarButton("Dashboard", USER_DASHBOARD_CARD));
-                sidebarButtons.add(createSidebarButton("Làm Đánh Giá", TAKE_ASSESSMENT_CARD));
-                sidebarButtons.add(createSidebarButton("Lịch Sử Đánh Giá", VIEW_HISTORY_CARD));
+                sidebarButtons.add(createSidebarButton("Do an assessment", TAKE_ASSESSMENT_CARD));
+                sidebarButtons.add(createSidebarButton("View Assessment History", VIEW_HISTORY_CARD));
             }
 
             for (JButton btn : sidebarButtons) {
@@ -360,21 +360,21 @@ public class MainFrame extends JFrame {
         boolean panelFoundAndVisible = false;
 
         if (USER_DASHBOARD_CARD.equals(panelNameCard) && userDashboardPanel != null) {
-            userDashboardPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Bảng Điều Khiển";
+            userDashboardPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Dashboard";
         } else if (ADMIN_DASHBOARD_CARD.equals(panelNameCard) && adminDashboardPanel != null) {
-            adminDashboardPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Bảng Điều Khiển Admin";
+            adminDashboardPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Dashboard Admin";
         } else if (TAKE_ASSESSMENT_CARD.equals(panelNameCard) && takeAssessmentPanel != null) {
-            takeAssessmentPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Làm Bài Đánh Giá";
+            takeAssessmentPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Do an assessment";
         } else if (MANAGE_USERS_CARD.equals(panelNameCard) && manageUsersPanel != null) {
-            manageUsersPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Quản Lý Người Dùng";
+            manageUsersPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "User Management";
         } else if (MANAGE_QUESTIONS_CARD.equals(panelNameCard) && manageQuestionsPanel != null) {
-            manageQuestionsPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Quản Lý Câu Hỏi";
+            manageQuestionsPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Question Management";
         } else if (MANAGE_SPONSORS_CARD.equals(panelNameCard) && manageSponsorsPanel != null) {
-            manageSponsorsPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Quản Lý Nhà Tài Trợ";
+            manageSponsorsPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Sponsor Management";
         } else if (VIEW_HISTORY_CARD.equals(panelNameCard) && viewHistoryPanel != null) {
-            viewHistoryPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Lịch Sử Đánh Giá";
+            viewHistoryPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "View Assessmnet History";
         } else if (GLOBAL_REPORTS_CARD.equals(panelNameCard) && globalReportsPanel != null) {
-            globalReportsPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "Báo Cáo Tổng Thể";
+            globalReportsPanel.panelVisible(); panelFoundAndVisible = true; panelTitle = "View Overall Report";
         }
 
         if (panelFoundAndVisible) {

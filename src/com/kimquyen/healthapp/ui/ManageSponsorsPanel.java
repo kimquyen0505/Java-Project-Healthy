@@ -38,12 +38,12 @@ public class ManageSponsorsPanel extends JPanel {
     private void initComponents() {
         // --- Top Panel (Title and Search) ---
         JPanel topPanel = new JPanel(new BorderLayout(10, 5));
-        JLabel titleLabel = new JLabel("Quản Lý Nhà Tài Trợ", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Sponsor Management", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         topPanel.add(titleLabel, BorderLayout.NORTH);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.add(new JLabel("Tìm kiếm (Tên):"));
+        searchPanel.add(new JLabel("Search (Name):"));
         searchField = new JTextField(30);
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) { filterTable(); }
@@ -55,7 +55,7 @@ public class ManageSponsorsPanel extends JPanel {
         add(topPanel, BorderLayout.NORTH);
 
         // --- Table ---
-        String[] columnNames = {"ID Nhà Tài Trợ", "Tên Nhà Tài Trợ"};
+        String[] columnNames = {"Sponsor ID ", "Sponsor Name"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -93,14 +93,14 @@ public class ManageSponsorsPanel extends JPanel {
         Dimension backButtonDim = new Dimension(190, 35); // Kích thước cho nút Quay lại
 
 
-        addButton = new JButton("Thêm Mới");
+        addButton = new JButton("ADD");
         addButton.setFont(buttonFont);
         addButton.setPreferredSize(regularButtonDim);
         addButton.setIcon(UIManager.getIcon("FileChooser.newFolderIcon")); // Ví dụ icon
         addButton.addActionListener(e -> openAddEditSponsorDialog(null));
         controlPanel.add(addButton);
 
-        editButton = new JButton("Sửa");
+        editButton = new JButton("EDIT");
         editButton.setFont(buttonFont);
         editButton.setPreferredSize(regularButtonDim);
         editButton.setIcon(UIManager.getIcon("Actions.Redo")); // Ví dụ icon (tìm icon phù hợp hơn)
@@ -112,21 +112,21 @@ public class ManageSponsorsPanel extends JPanel {
         });
         controlPanel.add(editButton);
 
-        deleteButton = new JButton("Xóa");
+        deleteButton = new JButton("DELETE");
         deleteButton.setFont(buttonFont);
         deleteButton.setPreferredSize(regularButtonDim);
         deleteButton.setIcon(UIManager.getIcon("FileChooser.deleteIcon")); // Ví dụ icon
         deleteButton.addActionListener(e -> deleteSelectedSponsor());
         controlPanel.add(deleteButton);
 
-        viewUsersButton = new JButton("Xem Người Dùng Được Tài Trợ");
+        viewUsersButton = new JButton("View Sponsored Users");
         viewUsersButton.setFont(buttonFont);
         viewUsersButton.setPreferredSize(viewUsersButtonDim);
         // viewUsersButton.setIcon(UIManager.getIcon("Tree.openIcon")); // Ví dụ icon
         viewUsersButton.addActionListener(e -> openViewSponsoredUsersDialog());
         controlPanel.add(viewUsersButton);
 
-        refreshButton = new JButton("Làm Mới DS");
+        refreshButton = new JButton("Refresh");
         refreshButton.setFont(buttonFont);
         refreshButton.setPreferredSize(regularButtonDim);
         // refreshButton.setIcon(UIManager.getIcon("FileChooser.refreshAction")); // Ví dụ icon (Tìm icon phù hợp)
@@ -134,7 +134,7 @@ public class ManageSponsorsPanel extends JPanel {
         controlPanel.add(refreshButton);
 
         // Nút "Quay Lại Dashboard"
-        backButton = new JButton("Quay Lại Dashboard");
+        backButton = new JButton("Return Dashboard");
         backButton.setFont(buttonFont);
         backButton.setPreferredSize(backButtonDim);
         // backButton.setIcon(UIManager.getIcon("FileChooser.homeFolderIcon")); // Ví dụ icon
@@ -159,7 +159,7 @@ public class ManageSponsorsPanel extends JPanel {
                 // Lọc trên cột Tên Nhà Tài Trợ (index 1)
                 sorter.setRowFilter(RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(text), 1));
             } catch (PatternSyntaxException pse) {
-                System.err.println("Lỗi Regex khi tìm kiếm nhà tài trợ: " + pse.getMessage());
+                System.err.println("Regex error when searching for sponsors: " + pse.getMessage());
             }
         }
     }
@@ -167,7 +167,7 @@ public class ManageSponsorsPanel extends JPanel {
     public void loadSponsorsData() {
         tableModel.setRowCount(0); // Xóa dữ liệu cũ
         if (sponsorService == null) {
-            JOptionPane.showMessageDialog(this, "Lỗi: Service quản lý nhà tài trợ chưa sẵn sàng.", "Lỗi Service", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error: Sponsor management service is not ready.", " Service Error ", JOptionPane.ERROR_MESSAGE);
             return;
         }
         List<Sponsor> sponsors = sponsorService.getAllSponsors();
@@ -179,14 +179,14 @@ public class ManageSponsorsPanel extends JPanel {
             // Tùy chọn: Hiển thị thông báo nếu không có nhà tài trợ nào
             // Ví dụ: tableModel.addRow(new Object[]{"", "Không có nhà tài trợ nào."});
             // Hoặc một JLabel riêng biệt.
-             System.out.println("ManageSponsorsPanel: Không có nhà tài trợ nào để hiển thị.");
+             System.out.println("ManageSponsorsPanel: No sponsors to display.");
         }
     }
 
     private Sponsor getSelectedSponsorFromTable() {
         int selectedRowView = sponsorsTable.getSelectedRow();
         if (selectedRowView == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một nhà tài trợ từ danh sách.", "Chưa Chọn", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a sponsor from the list.", "Not Select", JOptionPane.INFORMATION_MESSAGE);
             return null;
         }
         // Chuyển đổi chỉ số dòng từ view sang model (quan trọng khi có sắp xếp/lọc)
@@ -195,7 +195,7 @@ public class ManageSponsorsPanel extends JPanel {
 
         Sponsor sponsor = sponsorService.getSponsorById(sponsorId);
         if (sponsor == null) {
-            JOptionPane.showMessageDialog(this, "Không thể tải thông tin chi tiết cho nhà tài trợ ID: " + sponsorId + ".\nNhà tài trợ có thể đã bị xóa.", "Lỗi Dữ Liệu", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Unable to load detailed information for sponsor ID: " + sponsorId + ".\nThe sponsor may have been deleted.", "Data error", JOptionPane.ERROR_MESSAGE);
             loadSponsorsData(); // Làm mới bảng nếu nhà tài trợ không còn tồn tại
         }
         return sponsor;
@@ -203,7 +203,7 @@ public class ManageSponsorsPanel extends JPanel {
 
     private void openAddEditSponsorDialog(Sponsor sponsorToEdit) {
         // Đảm bảo AddEditSponsorDialog đã được tạo và hoạt động đúng
-        String dialogTitle = (sponsorToEdit == null) ? "Thêm Nhà Tài Trợ Mới" : "Sửa Thông Tin Nhà Tài Trợ (ID: " + sponsorToEdit.getId() + ")";
+        String dialogTitle = (sponsorToEdit == null) ? "Add new sponsor" : "Edit Sponsor Information (ID: " + sponsorToEdit.getId() + ")";
         AddEditSponsorDialog dialog = new AddEditSponsorDialog(mainFrame, dialogTitle, sponsorToEdit);
         dialog.setVisible(true);
 
@@ -213,10 +213,10 @@ public class ManageSponsorsPanel extends JPanel {
             String actionType;
 
             if (sponsorToEdit == null) { // Chế độ Thêm Mới
-                actionType = "Thêm";
+                actionType = " ";
                 successOperation = sponsorService.addSponsor(sponsorFromDialog);
             } else { // Chế độ Sửa
-                actionType = "Cập nhật";
+                actionType = "update";
                 // Đảm bảo sponsorFromDialog có ID đúng (từ sponsorToEdit)
                 // AddEditSponsorDialog nên xử lý việc này khi populate hoặc khi lấy sponsor
                 if (sponsorFromDialog.getId() == 0 && sponsorToEdit.getId() != 0) {
@@ -226,10 +226,10 @@ public class ManageSponsorsPanel extends JPanel {
             }
 
             if (successOperation) {
-                JOptionPane.showMessageDialog(this, actionType + " nhà tài trợ thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, actionType + " Sponsor added successfully.!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 loadSponsorsData(); // Làm mới danh sách
             } else {
-                JOptionPane.showMessageDialog(this, actionType + " nhà tài trợ thất bại.\nTên có thể đã tồn tại hoặc có lỗi khác.", "Lỗi Thao Tác", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, actionType + " Sponsor operation failed. The name may already exist or there is another error.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -250,30 +250,27 @@ public class ManageSponsorsPanel extends JPanel {
         }
 
         int confirm = JOptionPane.showConfirmDialog(this,
-                "Bạn có chắc chắn muốn xóa nhà tài trợ:\nID: " + selectedSponsor.getId() + "\nTên: " + selectedSponsor.getName() + "?\n\n" +
-                "LƯU Ý: Hành động này có thể thất bại nếu nhà tài trợ này đang tài trợ cho người dùng.",
-                "Xác Nhận Xóa Nhà Tài Trợ",
+                "Are you sure you want to delete the sponsor:\nID: " + selectedSponsor.getId() + "\nName: " + selectedSponsor.getName() + "?\n\n" +
+                "NOTE: This action may fail if this sponsor is currently sponsoring users..",
+                "Confirm Sponsor Deletion",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
             boolean success = sponsorService.deleteSponsor(selectedSponsor.getId());
             if (success) {
-                JOptionPane.showMessageDialog(this, "Đã xóa nhà tài trợ thành công!", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Sponsor deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 loadSponsorsData(); // Làm mới danh sách
             } else {
                 JOptionPane.showMessageDialog(this,
-                        "Xóa nhà tài trợ thất bại.\nNguyên nhân có thể là do nhà tài trợ này đang liên kết với một hoặc nhiều người dùng.\n" +
-                        "Vui lòng kiểm tra và bỏ liên kết của người dùng với nhà tài trợ này trước khi xóa.",
-                        "Lỗi Xóa", JOptionPane.ERROR_MESSAGE);
+                        "Failed to delete sponsor.\nThe reason may be that this sponsor is linked to one or more users\n" +
+                        "Please check and unlink users from this sponsor before deleting.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    /**
-     * Phương thức này sẽ được gọi bởi MainFrame khi panel này được hiển thị.
-     * Dùng để tải/làm mới dữ liệu cho panel.
-     */
+    
     public void panelVisible() {
         searchField.setText(""); // Xóa nội dung tìm kiếm cũ
         if (sorter != null) {

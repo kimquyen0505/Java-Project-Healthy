@@ -35,7 +35,7 @@ public class UserDashboardPanel extends JPanel {
 
     private void initComponents() {
         // Welcome Label
-        welcomeLabel = new JLabel("Chào mừng!", JLabel.CENTER);
+        welcomeLabel = new JLabel("WELCOME!", JLabel.CENTER);
         welcomeLabel.setFont(UIConstants.FONT_TITLE_LARGE);
         welcomeLabel.setForeground(UIConstants.COLOR_TEXT_DARK); // Chữ tối trên nền sáng
         welcomeLabel.setBorder(new EmptyBorder(15, 0, 30, 0));
@@ -51,13 +51,13 @@ public class UserDashboardPanel extends JPanel {
 
         // Thêm các thẻ chức năng
         dashboardCardsPanel.add(createDashboardCard(
-                "Làm Bài Đánh Giá Mới",
+                "Start New Assessment",
                 MainFrame.TAKE_ASSESSMENT_CARD
                 // Bỏ đường dẫn icon nếu không dùng
         ));
 
         dashboardCardsPanel.add(createDashboardCard(
-                "Xem Lịch Sử Đánh Giá",
+                "View Assessment History",
                 MainFrame.VIEW_HISTORY_CARD
                 // Bỏ đường dẫn icon nếu không dùng
         ));
@@ -109,9 +109,9 @@ public class UserDashboardPanel extends JPanel {
         SessionManager session = SessionManager.getInstance();
         if (session.isLoggedIn() && session.getCurrentUserData() != null) {
             UserData currentUserData = session.getCurrentUserData();
-            welcomeLabel.setText("Chào mừng, " + currentUserData.getName() + "!");
+            welcomeLabel.setText("Welcome, " + currentUserData.getName() + "!");
         } else {
-            welcomeLabel.setText("Chào mừng!");
+            welcomeLabel.setText("Welcome!");
             // Cân nhắc xử lý trường hợp session không hợp lệ, ví dụ logout
             if (mainFrame != null && (!session.isLoggedIn() || session.getCurrentAccount() == null)) {
                  mainFrame.performLogout();

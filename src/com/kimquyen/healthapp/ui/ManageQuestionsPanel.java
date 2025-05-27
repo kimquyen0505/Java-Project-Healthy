@@ -37,12 +37,12 @@ public class ManageQuestionsPanel extends JPanel {
 
     private void initComponents() {
         JPanel topPanel = new JPanel(new BorderLayout(10, 5));
-        JLabel titleLabel = new JLabel("Quản Lý Câu Hỏi", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Question Management", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         topPanel.add(titleLabel, BorderLayout.NORTH);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.add(new JLabel("Tìm kiếm (Tiêu đề, Nội dung):"));
+        searchPanel.add(new JLabel("Search (Title, Content):"));
         searchField = new JTextField(30);
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) { filterTable(); }
@@ -54,7 +54,7 @@ public class ManageQuestionsPanel extends JPanel {
         add(topPanel, BorderLayout.NORTH);
 
         // Table Model và JTable
-        String[] columnNames = {"ID", "Tiêu đề", "Nội dung (tóm tắt)", "Loại"};
+        String[] columnNames = {"ID", "Title", "Content", "Type"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -85,11 +85,11 @@ public class ManageQuestionsPanel extends JPanel {
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         // ... (Khởi tạo các nút addButton, editButton, deleteButton, refreshButton, backButton như ManageUsersPanel)
 
-        addButton = new JButton("Thêm Mới");
+        addButton = new JButton("ADD");
         addButton.addActionListener(e -> openAddEditQuestionDialog(null));
         controlPanel.add(addButton);
         
-        editButton = new JButton("Sửa");
+        editButton = new JButton("EDIT");
         editButton.addActionListener(e -> {
             HraQuestion selected = getSelectedQuestionFromTable();
             if (selected != null) {
@@ -98,19 +98,19 @@ public class ManageQuestionsPanel extends JPanel {
         });
         controlPanel.add(editButton);
 
-        deleteButton = new JButton("Xóa");
+        deleteButton = new JButton("DELETE");
         deleteButton.addActionListener(e -> deleteSelectedQuestion());
         controlPanel.add(deleteButton);
         
-        viewDetailsButton = new JButton("Xem Chi Tiết");
+        viewDetailsButton = new JButton("View Details");
         viewDetailsButton.addActionListener(e -> openViewDetailsDialog());
         controlPanel.add(viewDetailsButton);
 
-        refreshButton = new JButton("Làm Mới");
+        refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(e -> loadQuestionsData());
         controlPanel.add(refreshButton);
 
-        backButton = new JButton("Quay Lại Dashboard");
+        backButton = new JButton("Return Dashboard");
         backButton.addActionListener(e -> mainFrame.showPanel(MainFrame.ADMIN_DASHBOARD_CARD));
         controlPanel.add(backButton);
         
@@ -127,7 +127,7 @@ public class ManageQuestionsPanel extends JPanel {
                 // Lọc trên cột Tiêu đề (index 1) hoặc Nội dung (index 2)
                 sorter.setRowFilter(RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(text), 1, 2));
             } catch (PatternSyntaxException pse) {
-                System.err.println("Lỗi Regex khi tìm kiếm câu hỏi: " + pse.getMessage());
+                System.err.println("Regex error when searching for questions: " + pse.getMessage());
             }
         }
     }
@@ -135,7 +135,7 @@ public class ManageQuestionsPanel extends JPanel {
     public void loadQuestionsData() {
         tableModel.setRowCount(0);
         if (questionService == null) {
-            JOptionPane.showMessageDialog(this, "Lỗi: Service quản lý câu hỏi chưa sẵn sàng.", "Lỗi Service", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error: Question management service is not ready.", "Service Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         List<HraQuestion> questions = questionService.getAllQuestions();
@@ -158,7 +158,7 @@ public class ManageQuestionsPanel extends JPanel {
     private HraQuestion getSelectedQuestionFromTable() {
         int selectedRowView = questionsTable.getSelectedRow();
         if (selectedRowView == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một câu hỏi.", "Chưa chọn", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a question.", "Not Select", JOptionPane.WARNING_MESSAGE);
             return null;
         }
         int selectedRowModel = questionsTable.convertRowIndexToModel(selectedRowView);
@@ -167,13 +167,13 @@ public class ManageQuestionsPanel extends JPanel {
         // Cần lấy đầy đủ thông tin câu hỏi (bao gồm cả choices) từ service
         HraQuestion fullQuestion = questionService.getQuestionById(questionId);
         if (fullQuestion == null) {
-             JOptionPane.showMessageDialog(this, "Không thể tải chi tiết câu hỏi ID: " + questionId, "Lỗi", JOptionPane.ERROR_MESSAGE);
+             JOptionPane.showMessageDialog(this, "Unable to load question details for ID: " + questionId, "Error", JOptionPane.ERROR_MESSAGE);
         }
         return fullQuestion;
     }
 
     private void openAddEditQuestionDialog(HraQuestion questionToEdit) {
-        String title = (questionToEdit == null) ? "Thêm Câu Hỏi Mới" : "Sửa Câu Hỏi (ID: " + questionToEdit.getQuestionId() + ")";
+        String title = (questionToEdit == null) ? "Add New Question" : "Edit Quetion (ID: " + questionToEdit.getQuestionId() + ")";
         AddEditQuestionDialog dialog = new AddEditQuestionDialog(mainFrame, title, questionToEdit);
         dialog.setVisible(true);
 
@@ -184,17 +184,17 @@ public class ManageQuestionsPanel extends JPanel {
                 // Vì question_id không phải AI trong hra_qna_scores, cần cách tạo ID mới
                 // Hoặc DAO sẽ xử lý việc này. Tạm thời để service/DAO quyết định ID.
                 success = questionService.addQuestion(questionFromDialog);
-                if (success) JOptionPane.showMessageDialog(this, "Thêm câu hỏi thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                if (success) JOptionPane.showMessageDialog(this, "Question added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
 
             } else { // Chế độ sửa
                 // questionFromDialog đã có questionId từ questionToEdit
                 success = questionService.updateQuestion(questionFromDialog);
-                 if (success) JOptionPane.showMessageDialog(this, "Cập nhật câu hỏi thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                 if (success) JOptionPane.showMessageDialog(this, "Question updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             }
             if(success) {
                 loadQuestionsData();
             } else {
-                 JOptionPane.showMessageDialog(this, (questionToEdit == null ? "Thêm" : "Cập nhật") + " câu hỏi thất bại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                 JOptionPane.showMessageDialog(this, (questionToEdit == null ? "Add" : "Update") + " question error.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -210,7 +210,7 @@ public class ManageQuestionsPanel extends JPanel {
     private void deleteSelectedQuestion() {
         int selectedRowView = questionsTable.getSelectedRow();
         if (selectedRowView == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một câu hỏi để xóa.", "Chưa chọn", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a question to delete.", "Not select", JOptionPane.WARNING_MESSAGE);
             return;
         }
         int selectedRowModel = questionsTable.convertRowIndexToModel(selectedRowView);
@@ -219,16 +219,16 @@ public class ManageQuestionsPanel extends JPanel {
 
 
         int confirm = JOptionPane.showConfirmDialog(this,
-                "Bạn có chắc chắn muốn xóa câu hỏi:\nID: " + questionId + "\nNội dung: " + questionText + "\nTất cả các lựa chọn và điểm liên quan sẽ bị xóa.",
-                "Xác Nhận Xóa Câu Hỏi", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                "Are you sure you want to delete the question:\nID: " + questionId + "\nContent: " + questionText + "\nAll related options and scores will be deleted.",
+                "Confirm Delete Question", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
             boolean success = questionService.deleteQuestion(questionId);
             if (success) {
-                JOptionPane.showMessageDialog(this, "Đã xóa câu hỏi thành công.", "Thành Công", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Question deleted successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 loadQuestionsData();
             } else {
-                JOptionPane.showMessageDialog(this, "Xóa câu hỏi thất bại. Có thể có lỗi hoặc ràng buộc dữ liệu.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Failed to delete the question. There may be an error or data constraints.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

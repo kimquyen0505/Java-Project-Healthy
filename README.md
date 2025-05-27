@@ -1,138 +1,167 @@
 # Health Response Application
 
-## 1. Overview
+## Overview
 
-The Health Response Application is a Java Swing-based desktop application designed for conducting health risk assessments (HRAs). It allows users to register, log in, take assessments, and view their results and history. Administrators have additional capabilities to manage users, HRA questions, sponsors, and view global reports on user data and assessment outcomes.
+The Health Response Application is a Java Swing desktop application designed to manage and conduct Health Risk Assessments (HRAs). The application allows users to register, log in, take assessments, view their history, and receive results regarding their risk level. Administrators can manage users, questions, sponsors, and view overall reports.
 
-The application connects to a MySQL database to store and retrieve all necessary data.
+The application is built on the Java Swing platform, utilizes the FlatLaf library for a modern user interface, and connects to a MySQL database for data storage.
 
-## 2. Features
+## Key Features
 
-### 2.1. User Features
-*   **Registration & Login:** Users can create new accounts and log in.
+### For Users (USER Role)
+
+*   **Registration & Login:** Create a new account and log into the system.
 *   **Take Assessment:**
-    *   Answer a series of HRA questions.
-    *   Supports various question types: Single Choice, Multiple Choice, Text Input.
-*   **View Assessment Results:** Immediately see the total score and determined risk level after submitting an assessment.
-*   **View History:** Access a history of all past assessments taken, including dates, scores, and risk levels.
-*   **User Dashboard:** A central place for users to access main functionalities.
+    *   Answer a series of health-related questions.
+    *   Question types include: single choice, multiple choice, and text input.
+*   **View Results:**
+    *   Receive a total score after completing an assessment.
+    *   View the risk level determined based on the score.
+*   **View Assessment History:** Track previous assessment attempts.
+*   **User Dashboard:** Main interface displaying available user functions.
 
-### 2.2. Administrator Features
-*   **Admin Dashboard:** Central hub with quick statistics (e.g., total users) and access to management modules.
-*   **User Management (CRUD):**
-    *   View a list of all users.
-    *   Add new users (with username, password, name, role, optional sponsor).
-    *   Edit existing user details (name, role, sponsor, reset password).
-    *   Delete users.
-    *   Search/filter users.
-*   **Question Management (CRUD):**
-    *   View a list of all HRA questions.
-    *   Add new questions (specifying type, title, text, options, and scores).
-    *   Edit existing questions.
-    *   Delete questions.
-    *   View detailed information for each question.
-    *   Search/filter questions.
-*   **Sponsor Management (CRUD):**
-    *   View a list of all sponsors.
-    *   Add new sponsors.
-    *   Edit sponsor names.
-    *   Delete sponsors (with checks for existing users sponsored).
-    *   View users associated with a specific sponsor.
-    *   Search/filter sponsors.
-*   **Global Reports:**
-    *   **Risk Level Distribution:** Pie chart showing the distribution of users across different risk levels.
-    *   **Users by Sponsor:** Bar chart showing the number of users per sponsor.
-    *   **General User Statistics:** Display total number of users.
+### For Administrators (ADMIN Role)
 
-## 3. Technologies Used
+*   **Admin Dashboard:** Overview interface with management functions.
+*   **User Management:**
+    *   Add, edit, and delete user accounts.
+    *   Assign roles and sponsors to users.
+*   **Question Management:**
+    *   Add, edit, and delete questions in the HRA system.
+    *   Define question types, content, options (if any), and corresponding scores for each option or text-based question.
+*   **Sponsor Management:**
+    *   Add, edit, and delete sponsor information.
+    *   View a list of users sponsored by a specific sponsor.
+*   **View Global Reports:**
+    *   Chart displaying user risk level distribution.
+    *   Chart displaying response distribution for specific questions.
+    *   Chart showing the number of users per sponsor.
+    *   Other general statistics.
 
-*   **Language:** Java (JDK 8 or higher recommended)
-*   **UI:** Java Swing
-*   **Database:** MySQL (Managed via SQLYog or similar tools)
-*   **Charting:** JFreeChart (for Global Reports)
+## Application Architecture
+
+The application follows a 3-tier architecture:
+
+1.  **Presentation Tier (UI):**
+    *   Package: `com.kimquyen.healthapp.ui`
+    *   Built using Java Swing.
+    *   Uses `CardLayout` to manage functional screens.
+    *   The FlatLaf library is used for an enhanced user interface.
+    *   `UIConstants` for managing interface constants (colors, fonts).
+
+2.  **Business Logic Tier (Service):**
+    *   Package: `com.kimquyen.healthapp.service`
+    *   Includes Service classes responsible for handling business logic and coordinating operations between the UI and DAO.
+    *   Passwords are hashed using the BCrypt algorithm (`BCryptPasswordHashingServiceImpl`).
+
+3.  **Data Access Tier (DAO):**
+    *   Package: `com.kimquyen.healthapp.dao`
+    *   DAO classes are responsible for direct interaction with the MySQL database via JDBC.
+    *   Uses `PreparedStatement` to prevent SQL Injection vulnerabilities.
+
+### Other Components
+
+*   **Model Tier:**
+    *   Package: `com.kimquyen.healthapp.model`
+    *   Contains POJO classes representing data entities (e.g., `Account`, `UserData`, `HraQuestion`).
+*   **Utility Tier:**
+    *   Package: `com.kimquyen.healthapp.util`
+    *   Contains utility classes such as `DatabaseUtil` (DB connection management), `SessionManager` (login session management), `ValidationUtil` (input validation).
+*   **Configuration:**
+    *   Package: `com.kimquyen.healthapp.config`
+    *   `DatabaseConfig` contains database connection configuration information.
+
+## Technologies Used
+
+*   **Language:** Java (JDK 8+)
+*   **User Interface (UI):** Java Swing
+*   **UI Library:** FlatLaf (for a modern look and feel)
+*   **Database:** MySQL (Managed with SQLyog or similar)
+*   **DB Connectivity:** JDBC (MySQL Connector/J)
 *   **Password Hashing:** jBCrypt
-*   **IDE:** Developed in Eclipse (as a non-Maven project)
+*   **Charts/Reports:** JFreeChart
 
-## 4. Prerequisites
+## Setup and Running the Application
 
-*   **Java Development Kit (JDK):** Version 8 or newer.
-*   **MySQL Server:** Installed and running.
-*   **MySQL Client/Tool:** SQLYog, MySQL Workbench, DBeaver, or similar for database setup.
-*   **Eclipse IDE for Java Developers:** (Or any other Java IDE, but setup instructions are Eclipse-centric).
-*   **MySQL Connector/J JAR:** The JDBC driver for MySQL.
-*   **JFreeChart JARs:** `jfreechart-x.y.z.jar` and its dependency (e.g., `jcommon-x.y.z.jar` or `fxgraphics2d-x.y.z.jar`).
+### System Requirements
 
-## 5. Setup and Installation
+*   JDK 8 or higher.
+*   MySQL Server.
+*   A MySQL management tool (e.g., SQLyog, MySQL Workbench, DBeaver).
+*   Eclipse IDE (or other compatible Java IDE).
 
-### 5.1. Database Setup
-1.  **Create Database:** Using your MySQL client, create a database named `hihi`.
-    ```sql
-    CREATE DATABASE hihi;
-    USE hihi;
-    ```
-2.  **Create Tables:** You will need to create the following tables. **A SQL script with the table definitions is required.** (This script was not provided, so you'll need to ensure it exists or create it based on the DAO classes).
-    *   `account` (for user login credentials and roles)
-    *   `users_data` (for user profile information)
-    *   `sponsor_data` (for sponsor information)
-    *   `hra_qna_scores` (for HRA questions, their options, and scores - note: each option is a row)
-    *   `hra_responses` (for individual user answers to questions)
-    *   `user_assessment_attempts` (for summarized results of each assessment attempt)
-3.  **Configure Connection:**
-    *   Open `com/kimquyen/healthapp/config/DatabaseConfig.java`.
-    *   Update `DB_URL`, `DB_USER`, and `DB_PASSWORD` to match your MySQL setup.
-4.  **Initial Admin Account (Manual or Utility):**
-    *   You'll need at least one admin account to manage the system.
-    *   Run the `com.kimquyen.healthapp.util.PasswordHasherUtil.java` utility. It will print hashed passwords to the console.
-    *   Manually insert an admin record into the `users_data` table and then into the `account` table using a hashed password generated by the utility.
-        *   Example `users_data` insert: `INSERT INTO users_data (name, created_at) VALUES ('Super Admin', NOW());` (Get the `id` of this new row).
-        *   Example `account` insert: `INSERT INTO account (username, password, role, user_data_fk_id) VALUES ('superadmin', 'YOUR_HASHED_PASSWORD_HERE', 'ADMIN', ID_FROM_USERS_DATA);`
-5.  **Generate Accounts for Existing Users (Optional):**
-    *   If you have data in `users_data` without corresponding entries in the `account` table, run `com.kimquyen.healthapp.util.AccountGeneratorUtil.java`. This utility will attempt to create default accounts for them.
+### Installation Steps
 
-### 5.2. Eclipse Project Setup
-1.  **Import Project:**
-    *   In Eclipse, go to `File` -> `Import...`.
-    *   Choose `General` -> `Existing Projects into Workspace`.
-    *   Select the root directory of your project and click `Finish`.
-2.  **Add Libraries (JARs) to Build Path:** Since this is not a Maven project, you must manually add external JARs.
-    *   Create a `lib` folder in your project root if it doesn't exist.
-    *   Copy the following JAR files into the `lib` folder:
-        *   MySQL Connector/J JAR (e.g., `mysql-connector-java-8.0.x.jar`)
-        *   JFreeChart JAR (e.g., `jfreechart-1.0.19.jar` or `jfreechart-1.5.3.jar`)
-        *   JFreeChart dependency JAR (e.g., `jcommon-1.0.23.jar` for older JFreeChart, or `fxgraphics2d-1.8.jar` for JFreeChart 1.5.x)
-        *   jBCrypt JAR (e.g., `jbcrypt-0.4.jar`)
-    *   Right-click on your project in Eclipse's "Package Explorer".
-    *   Select `Build Path` -> `Configure Build Path...`.
-    *   Go to the `Libraries` tab.
-    *   Click `Add JARs...`.
-    *   Navigate to the `lib` folder in your project and select all the JARs you copied.
-    *   Click `OK`, then `Apply and Close`.
-3.  **Clean and Rebuild:**
-    *   Go to `Project` -> `Clean...`, select your project, and click `Clean`.
+1.  **Database Setup:**
+    *   Start your MySQL Server.
+    *   Using SQLyog (or a similar tool), create a database named `hihi`.
+    *   Execute SQL files (if provided, or manually create tables based on the source code analysis - see *Inferred Database Structure* below).
+    *   **Important:** Configure the database connection information in the `src/com/kimquyen/healthapp/config/DatabaseConfig.java` file to match your MySQL environment (DB_URL, DB_USER, DB_PASSWORD).
 
-## 6. Running the Application
+2.  **Project Setup in Eclipse:**
+    *   Create a new Java Project in Eclipse.
+    *   Copy the entire source code into the `src` directory of the project.
+    *   Add the necessary JAR libraries to the project's Build Path:
+        *   MySQL Connector/J (e.g., `mysql-connector-java-8.x.x.jar`)
+        *   jBCrypt (e.g., `jbcrypt-0.4.jar`)
+        *   JFreeChart (e.g., `jfreechart-1.5.x.jar`, `jcommon-1.0.x.jar`)
+        *   FlatLaf (e.g., `flatlaf-x.x.jar`)
+        (You can find and download these JAR files from Maven Central or official sources.)
+        *How to add JARs in Eclipse:* Right-click on Project > Properties > Java Build Path > Libraries (tab) > Add External JARs...
 
-1.  Locate the `com.kimquyen.healthapp.MainApp.java` file in the Package Explorer.
-2.  Right-click on `MainApp.java` and select `Run As` -> `Java Application`.
-3.  The Login window should appear.
+3.  **Create Initial Data (Optional but Recommended):**
+    *   **Admin Account:** Run `src/com/kimquyen/healthapp/util/PasswordHasherUtil.java` to generate a hashed password for the admin account. Then, manually insert a record into the `account` and `users_data` tables for the admin.
+    *   **Sample Questions:** Insert a few sample questions into the `hra_qna_scores` table to enable assessments.
+    *   **Sample User Accounts:** If you have data in `users_data` without corresponding `account` entries, you can run `src/com/kimquyen/healthapp/util/AccountGeneratorUtil.java` to automatically create accounts for these UserData entries.
 
-## 7. Known Issues / Notes
+### Running the Application
 
-*   **Non-Maven Project:** Dependency management is manual. Ensure all required JARs are correctly added to the build path.
-*   **Database Schema:** The `hra_qna_scores` table has a denormalized structure where question details (title, text, type) are repeated for each option. This makes CRUD operations in `HraQuestionDAO` complex.
-*   **Concurrency:** The `HraQuestionDAO.getNextQuestionId()` method is not concurrency-safe. This is generally not an issue for a single-user admin scenario but would be problematic in a multi-user concurrent environment.
-*   **Transaction Management:** Service methods performing multiple database operations (e.g., user registration, user deletion) do not have explicit database transaction management. This could lead to data inconsistencies if one part of an operation fails.
-*   **Error Handling:** DAOs primarily print stack traces and return null/false. For a more robust application, custom exceptions might be considered.
+*   In Eclipse, navigate to the `src/com/kimquyen/healthapp/MainApp.java` file.
+*   Right-click on `MainApp.java` > Run As > Java Application.
+*   The login screen will appear.
 
-## 8. Future Enhancements (Suggestions)
+## Inferred Database Structure (from source code)
 
-*   Refactor `HraQuestionDAO` and potentially the `hra_qna_scores` table schema for easier management.
-*   Enhance UI/UX with more modern look and feel or components.
-*   Add more detailed reporting features.
-*   Implement internationalization (i18n) for multiple language support.
+*   **`users_data`**: Stores user profile information.
+    *   `id` (INT, PK, AI)
+    *   `name` (VARCHAR)
+    *   `sponsor_id` (INT, FK - may reference `sponsor_data.id`, can be NULL)
+    *   `created_at` (TIMESTAMP)
+*   **`account`**: Stores login credentials.
+    *   `id` (INT, PK, AI - may not be necessary if `username` is PK)
+    *   `username` (VARCHAR, UNIQUE)
+    *   `password` (VARCHAR - stores hashed password)
+    *   `role` (VARCHAR - e.g., 'ADMIN', 'USER')
+    *   `user_data_fk_id` (INT, FK - references `users_data.id`)
+*   **`sponsor_data`**: Stores sponsor information.
+    *   `id` (INT, PK, AI)
+    *   `name` (VARCHAR, UNIQUE)
+*   **`hra_qna_scores`**: Stores questions, options, and scores.
+    *   `question_id` (INT) - Not AI, managed by code.
+    *   `type` (VARCHAR - e.g., 'SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'TEXT_INPUT')
+    *   `title` (VARCHAR, NULLABLE)
+    *   `text` (TEXT - question content)
+    *   `options` (VARCHAR, NULLABLE - option content)
+    *   `score` (INT, NULLABLE - score for the option or general score for text questions)
+    *   *Primary key could be (`question_id`, `options`) if `options` is not null for choice-based questions, or a separate auto-incrementing ID per row might be needed.*
+*   **`hra_responses`**: Stores user responses to questions.
+    *   `id` (INT, PK, AI)
+    *   `user_id` (INT, FK - references `users_data.id`)
+    *   `question_id` (INT, FK - references `hra_qna_scores.question_id`)
+    *   `response` (TEXT - user's answer)
+    *   `created_at` (TIMESTAMP)
+*   **`user_assessment_attempts`**: Stores a summary of each assessment attempt.
+    *   `attempt_id` (INT, PK, AI)
+    *   `user_data_id` (INT, FK - references `users_data.id`)
+    *   `assessment_date` (TIMESTAMP)
+    *   `total_score` (INT)
+    *   `risk_level` (VARCHAR)
 
+## Author
 
+*   Kim Quyen and Dai Loi
 
+## Additional Notes
 
-
-
+*   This application was analyzed based on the provided source code.
+*   Database details (exact column names, data types, constraints) are inferred and should be verified by examining the actual schema in SQLyog or a DDL (Data Definition Language) file if available.

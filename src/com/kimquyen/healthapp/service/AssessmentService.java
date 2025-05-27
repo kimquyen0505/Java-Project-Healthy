@@ -207,14 +207,6 @@ public class AssessmentService {
             return Collections.emptyMap();
         }
 
-        // Tùy chọn: Lấy thông tin câu hỏi để làm tiêu đề biểu đồ đẹp hơn sau này,
-        // hoặc để kiểm tra xem câu hỏi có tồn tại và là SINGLE_CHOICE không.
-        // HraQuestion question = hraQuestionDAO.getQuestionById(questionId);
-        // if (question == null || !HraQuestion.TYPE_SINGLE_CHOICE.equalsIgnoreCase(question.getType())) {
-        //     System.err.println("SERVICE (getResponseDistributionForQuestion): Question ID " + questionId + " không tồn tại hoặc không phải SINGLE_CHOICE.");
-        //     return Collections.emptyMap();
-        // }
-
         return hraResponseDAO.countResponsesForSingleQuestion(questionId);
     }
 
